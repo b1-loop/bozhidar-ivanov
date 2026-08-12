@@ -92,7 +92,61 @@ body {
   animation: marquee 40s linear infinite;
 }
 
+@keyframes clouds-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-25%, 0, 0); }
+}
+
+@keyframes clouds-drift-slow {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-15%, 0, 0); }
+}
+
+@keyframes clouds-drift-fast {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-35%, 0, 0); }
+}
+
+.clouds-a {
+  animation: clouds-drift 70s linear infinite;
+}
+
+.clouds-b {
+  animation: clouds-drift-slow 120s linear infinite;
+}
+
+.clouds-c {
+  animation: clouds-drift-fast 40s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee { animation: none; }
+  .clouds-a, .clouds-b, .clouds-c { animation: none; }
   .reveal { transition: none; clip-path: inset(0 0 0 0); }
+}
+
+/* View Transitions API — smooth fade+blur between pages */
+::view-transition-old(root) {
+  animation: fade-out-blur 320ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: fade-in-blur 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-out-blur {
+  from { opacity: 1; filter: blur(0); transform: scale(1); }
+  to   { opacity: 0; filter: blur(6px); transform: scale(0.995); }
+}
+
+@keyframes fade-in-blur {
+  from { opacity: 0; filter: blur(6px); transform: scale(1.005); }
+  to   { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }

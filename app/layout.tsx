@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
+import { LocaleProvider } from "@/lib/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,26 +26,38 @@ const displaySerif = Instrument_Serif({
 export const metadata: Metadata = {
   title: "Bozhidar Ivanov — Fullstack Developer",
   description:
-    "Fullstack Developer i Göteborg. C#/.NET, React, Blazor. En resa från fabriksgolvet till kod — driven av disciplin och detalj.",
+    "Fullstack Developer in Gothenburg. C#/.NET, React, Blazor. A journey from the factory floor to code — driven by discipline and detail.",
   metadataBase: new URL("https://bozhidar-ivanov.vercel.app"),
   openGraph: {
     title: "Bozhidar Ivanov — Fullstack Developer",
     description:
-      "En resa från fabriksgolvet till kod. Fullstack Developer med fokus på C#/.NET och Clean Architecture.",
+      "A journey from the factory floor to code. Fullstack Developer focused on C#/.NET and Clean Architecture.",
     type: "website",
-    locale: "sv_SE",
+    locale: "en_US",
+    siteName: "Bozhidar Ivanov",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bozhidar Ivanov — Fullstack Developer",
+    description:
+      "A journey from the factory floor to code. Fullstack Developer focused on C#/.NET and Clean Architecture.",
   },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="sv"
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${displaySerif.variable} antialiased`}
       suppressHydrationWarning
     >
       <body>
-        <SmoothScroll>{children}</SmoothScroll>
+        <LocaleProvider>
+          <ScrollProgress />
+          <SmoothScroll>{children}</SmoothScroll>
+          <KeyboardShortcuts />
+        </LocaleProvider>
+        <Analytics />
       </body>
     </html>
   );
