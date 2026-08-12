@@ -356,6 +356,46 @@ function MobileMenu({
   );
 }
 
+function GbFlag({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 14"
+      className={className}
+      aria-hidden
+      preserveAspectRatio="none"
+    >
+      <rect width="20" height="14" fill="#012169" />
+      <path
+        d="M0 0 L20 14 M20 0 L0 14"
+        stroke="#ffffff"
+        strokeWidth="2.8"
+      />
+      <path d="M0 0 L20 14 M20 0 L0 14" stroke="#C8102E" strokeWidth="1.1" />
+      <path
+        d="M10 0 V14 M0 7 H20"
+        stroke="#ffffff"
+        strokeWidth="4"
+      />
+      <path d="M10 0 V14 M0 7 H20" stroke="#C8102E" strokeWidth="2.2" />
+    </svg>
+  );
+}
+
+function SeFlag({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 14"
+      className={className}
+      aria-hidden
+      preserveAspectRatio="none"
+    >
+      <rect width="20" height="14" fill="#006AA7" />
+      <rect x="6" width="2.6" height="14" fill="#FECC00" />
+      <rect y="5.7" width="20" height="2.6" fill="#FECC00" />
+    </svg>
+  );
+}
+
 function LangSwitch({
   locale,
   setLocale,
@@ -364,32 +404,38 @@ function LangSwitch({
   setLocale: (l: Locale) => void;
 }) {
   return (
-    <div className="relative flex items-center rounded-full border border-white/10 bg-white/[0.03] p-0.5 text-[10px] font-medium uppercase tracking-wider">
+    <div className="relative flex items-center rounded-full border border-white/10 bg-white/[0.03] p-0.5">
       <button
         type="button"
         onClick={() => setLocale("en")}
-        className={cn(
-          "relative z-10 rounded-full px-2.5 py-1 transition-colors",
-          locale === "en" ? "text-background" : "text-white/60 hover:text-white",
-        )}
+        aria-label="Switch to English"
         aria-pressed={locale === "en"}
+        className={cn(
+          "relative z-10 flex h-7 w-9 items-center justify-center rounded-full transition-all",
+          locale === "en" ? "ring-1 ring-white/50" : "opacity-60 hover:opacity-100",
+        )}
       >
-        EN
+        <span className="block h-3.5 w-5 overflow-hidden rounded-[3px] shadow-[0_0_0_1px_rgba(0,0,0,0.35)]">
+          <GbFlag className="h-full w-full" />
+        </span>
       </button>
       <button
         type="button"
         onClick={() => setLocale("sv")}
-        className={cn(
-          "relative z-10 rounded-full px-2.5 py-1 transition-colors",
-          locale === "sv" ? "text-background" : "text-white/60 hover:text-white",
-        )}
+        aria-label="Byt till svenska"
         aria-pressed={locale === "sv"}
+        className={cn(
+          "relative z-10 flex h-7 w-9 items-center justify-center rounded-full transition-all",
+          locale === "sv" ? "ring-1 ring-white/50" : "opacity-60 hover:opacity-100",
+        )}
       >
-        SV
+        <span className="block h-3.5 w-5 overflow-hidden rounded-[3px] shadow-[0_0_0_1px_rgba(0,0,0,0.35)]">
+          <SeFlag className="h-full w-full" />
+        </span>
       </button>
       <span
         aria-hidden
-        className="absolute top-0.5 bottom-0.5 z-0 rounded-full bg-white transition-transform"
+        className="absolute top-0.5 bottom-0.5 z-0 rounded-full bg-white/10 transition-transform"
         style={{
           width: "calc(50% - 2px)",
           left: "2px",
