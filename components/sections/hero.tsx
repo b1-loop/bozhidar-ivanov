@@ -62,6 +62,13 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
+    // Skip pointer-parallax on touch devices — pointermove fires during
+    // touch scroll and causes needless jank.
+    const isTouch =
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(max-width: 768px)").matches;
+    if (isTouch) return;
+
     const onMove = (e: MouseEvent) => {
       const w = window.innerWidth;
       const h = window.innerHeight;
