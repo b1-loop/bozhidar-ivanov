@@ -57,7 +57,7 @@ function CaseStudyHero({
   cs: CaseStudy;
 }) {
   return (
-    <section className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
+    <section className="relative overflow-hidden pt-24 pb-16 md:pt-40 md:pb-32">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-50"
@@ -94,7 +94,7 @@ function CaseStudyHero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 font-display text-6xl leading-[0.9] tracking-tighter md:text-8xl lg:text-9xl"
+          className="mt-6 font-display text-[clamp(2.75rem,10vw,4rem)] leading-[0.9] tracking-tighter md:text-8xl lg:text-9xl"
         >
           {project.name}
         </motion.h1>
@@ -181,7 +181,7 @@ function Sections({ cs }: { cs: CaseStudy }) {
   return (
     <div className="relative border-t border-white/5 py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-10">
-        <div className="space-y-24">
+        <div className="space-y-16 md:space-y-24">
           {cs.sections.map((s, i) => (
             <motion.section
               key={s.heading}

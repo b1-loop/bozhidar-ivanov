@@ -50,7 +50,7 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .font-display {
@@ -123,6 +123,17 @@ body {
   .marquee { animation: none; }
   .clouds-a, .clouds-b, .clouds-c { animation: none; }
   .reveal { transition: none; clip-path: inset(0 0 0 0); }
+
+  /* Neutralize CSS animations & transitions site-wide. Framer Motion is
+     handled separately via <MotionConfig reducedMotion="user"> in layout. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* View Transitions API — smooth fade+blur between pages */

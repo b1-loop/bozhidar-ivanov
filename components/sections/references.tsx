@@ -116,8 +116,8 @@ function FeaturedQuote({
       {/* Giant decorative quote */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-6 left-4 font-display leading-none text-white/[0.06] md:text-[16rem]"
-        style={{ fontSize: "clamp(9rem, 20vw, 16rem)" }}
+        className="pointer-events-none absolute -top-6 left-4 font-display leading-none text-white/[0.06]"
+        style={{ fontSize: "clamp(5rem, 20vw, 16rem)" }}
       >
         &ldquo;
       </div>

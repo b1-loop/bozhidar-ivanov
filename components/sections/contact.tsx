@@ -136,7 +136,7 @@ export function Contact() {
             href={c.personal.github}
             icon={<GithubIcon className="h-5 w-5" />}
             label={c.ui.contact.github}
-            value="@b1-loop"
+            value={`@${c.personal.github.replace(/\/$/, "").split("/").pop() ?? ""}`}
             accent="#a78bfa"
             className="md:col-span-3 lg:col-span-4"
           />

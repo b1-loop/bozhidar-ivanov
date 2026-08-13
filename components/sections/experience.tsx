@@ -229,7 +229,7 @@ function StatsPanel({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="grid grid-cols-3 gap-3"
+      className="grid grid-cols-3 gap-2 sm:gap-3"
     >
       <StatItem value={8} suffix="+" label="Years" hint="in the workforce" />
       <StatItem value={totalRoles} label="Roles" hint="held to date" />
@@ -258,7 +258,7 @@ function StatItem({
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-4 ${
+      className={`relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] p-3 sm:p-4 ${
         accent ? "ring-1 ring-emerald-500/20" : ""
       }`}
     >
@@ -268,13 +268,15 @@ function StatItem({
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
         </span>
       )}
-      <div className="font-display text-3xl leading-none tracking-tighter text-foreground">
+      <div className="font-display text-2xl leading-none tracking-tighter text-foreground sm:text-3xl">
         <AnimatedNumber value={value} suffix={suffix} />
       </div>
       <div className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted">
         {label}
       </div>
-      <div className="mt-0.5 text-[10px] text-muted/70">{hint}</div>
+      <div className="mt-0.5 hidden text-[10px] text-muted/70 sm:block">
+        {hint}
+      </div>
     </div>
   );
 }

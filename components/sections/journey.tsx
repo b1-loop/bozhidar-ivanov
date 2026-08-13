@@ -20,9 +20,9 @@ export function Journey() {
       id="journey"
       ref={containerRef}
       className="relative"
-      style={{ height: `${total * 120}vh` }}
+      style={{ height: `${total * 120}dvh` }}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
         <div className="absolute inset-0">
           {c.journey.map((chapter, i) => (
             <ChapterImage
@@ -53,7 +53,10 @@ export function Journey() {
           ))}
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/60">
+        <div
+          className="absolute left-1/2 -translate-x-1/2 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/60"
+          style={{ bottom: "calc(env(safe-area-inset-bottom) + 2rem)" }}
+        >
           {c.ui.journey.hint}
         </div>
       </div>
@@ -198,7 +201,7 @@ function Chapter({
           </span>
         </div>
 
-        <h2 className="font-display text-6xl leading-[0.95] tracking-tighter text-white drop-shadow-2xl md:text-8xl lg:text-9xl">
+        <h2 className="font-display text-[clamp(2.75rem,10vw,4rem)] leading-[0.95] tracking-tighter text-white drop-shadow-2xl md:text-8xl lg:text-9xl">
           {chapter.title}
         </h2>
 

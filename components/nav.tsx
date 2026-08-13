@@ -88,15 +88,36 @@ export function Nav() {
     };
   }, []);
 
-  // Lock body scroll when menu open
+  // Lock body scroll when menu open — iOS Safari-safe pattern.
+  // `overflow:hidden` alone lets the page underneath keep scrolling on iOS;
+  // pinning the body with position:fixed + a negative top freezes it.
   useEffect(() => {
-    if (mobileOpen) {
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }
+    if (!mobileOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
+    };
   }, [mobileOpen]);
 
   // Close on Escape
@@ -129,12 +150,21 @@ export function Nav() {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-300 ease-out",
+          // Softer blur on mobile — heavy backdrop-blur is expensive on
+          // mobile GPUs when it stays visible during scroll.
           scrolled
-            ? "border-b border-white/5 bg-background/80 backdrop-blur-xl"
-            : "border-b border-transparent bg-black/25 backdrop-blur-[2px]",
+            ? "border-b border-white/5 bg-background/85 backdrop-blur-md md:bg-background/80 md:backdrop-blur-xl"
+            : "border-b border-transparent bg-black/30 md:bg-black/25 md:backdrop-blur-[2px]",
         )}
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-10">
+        <nav
+          className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5 md:px-10"
+          style={{
+            paddingLeft: "max(1rem, env(safe-area-inset-left))",
+            paddingRight: "max(1rem, env(safe-area-inset-right))",
+          }}
+        >
           <a
             href="#top"
             className="group flex items-center gap-2 font-display text-lg tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-xl"
@@ -268,7 +298,8 @@ function MobileMenu({
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className="fixed inset-x-0 top-[64px] z-40 mx-3 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e1220] to-[#050710] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] md:hidden"
+        className="fixed inset-x-0 z-40 mx-3 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e1220] to-[#050710] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] md:hidden"
+        style={{ top: "calc(env(safe-area-inset-top) + 68px)" }}
       >
         {/* Ambient glow */}
         <div
@@ -411,7 +442,7 @@ function LangSwitch({
         aria-label="Switch to English"
         aria-pressed={locale === "en"}
         className={cn(
-          "relative z-10 flex h-7 w-9 items-center justify-center rounded-full transition-all",
+          "relative z-10 flex h-9 w-11 items-center justify-center rounded-full transition-all sm:h-7 sm:w-9",
           locale === "en" ? "ring-1 ring-white/50" : "opacity-60 hover:opacity-100",
         )}
       >
@@ -425,7 +456,7 @@ function LangSwitch({
         aria-label="Byt till svenska"
         aria-pressed={locale === "sv"}
         className={cn(
-          "relative z-10 flex h-7 w-9 items-center justify-center rounded-full transition-all",
+          "relative z-10 flex h-9 w-11 items-center justify-center rounded-full transition-all sm:h-7 sm:w-9",
           locale === "sv" ? "ring-1 ring-white/50" : "opacity-60 hover:opacity-100",
         )}
       >

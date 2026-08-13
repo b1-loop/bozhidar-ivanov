@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { MotionConfig } from "framer-motion";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
@@ -28,6 +29,9 @@ export const metadata: Metadata = {
   description:
     "Fullstack Developer in Gothenburg. C#/.NET, React, Blazor. A journey from the factory floor to code — driven by discipline and detail.",
   metadataBase: new URL("https://bozhidar-ivanov.vercel.app"),
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
     title: "Bozhidar Ivanov — Fullstack Developer",
     description:
@@ -44,6 +48,12 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#06060a",
+  colorScheme: "dark",
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -52,11 +62,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body>
-        <LocaleProvider>
-          <ScrollProgress />
-          <SmoothScroll>{children}</SmoothScroll>
-          <KeyboardShortcuts />
-        </LocaleProvider>
+        <MotionConfig reducedMotion="user">
+          <LocaleProvider>
+            <ScrollProgress />
+            <SmoothScroll>{children}</SmoothScroll>
+            <KeyboardShortcuts />
+          </LocaleProvider>
+        </MotionConfig>
         <Analytics />
       </body>
     </html>

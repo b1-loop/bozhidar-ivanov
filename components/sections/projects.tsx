@@ -135,9 +135,10 @@ function ProjectCard({
               "repeating-linear-gradient(45deg, transparent 0, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 11px)",
           }}
         />
-        {/* Accent orb */}
+        {/* Accent orb — hidden on small screens; the blur is expensive on
+            mobile GPUs when repeated across 10+ cards. */}
         <div
-          className="absolute -top-8 -right-8 h-40 w-40 rounded-full opacity-40 blur-2xl transition-opacity group-hover:opacity-70"
+          className="absolute -top-8 -right-8 hidden h-40 w-40 rounded-full opacity-40 blur-2xl transition-opacity group-hover:opacity-70 sm:block"
           style={{
             background: `radial-gradient(circle, ${accent}, transparent 70%)`,
           }}
@@ -161,7 +162,7 @@ function ProjectCard({
           <Link
             href={primaryHref}
             aria-label={`Read ${project.name} case study`}
-            className="absolute bottom-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all group-hover:scale-110 group-hover:border-white/50 group-hover:bg-white group-hover:text-black"
+            className="absolute bottom-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all active:scale-95 group-hover:scale-110 group-hover:border-white/50 group-hover:bg-white group-hover:text-black sm:h-9 sm:w-9 sm:active:scale-100"
           >
             <ArrowUpRight className="h-4 w-4" />
           </Link>
@@ -171,7 +172,7 @@ function ProjectCard({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Open ${project.name}`}
-            className="absolute bottom-4 right-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all group-hover:scale-110 group-hover:border-white/50 group-hover:bg-white group-hover:text-black"
+            className="absolute bottom-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-sm transition-all active:scale-95 group-hover:scale-110 group-hover:border-white/50 group-hover:bg-white group-hover:text-black sm:h-9 sm:w-9 sm:active:scale-100"
           >
             <ArrowUpRight className="h-4 w-4" />
           </a>
@@ -191,7 +192,7 @@ function ProjectCard({
           {project.stack.map((s) => (
             <span
               key={s}
-              className="rounded-md border border-white/10 bg-white/[0.02] px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted transition-colors group-hover:border-white/25 group-hover:text-foreground/80"
+              className="rounded-md border border-white/10 bg-white/[0.02] px-2 py-0.5 text-[11px] uppercase tracking-wider text-muted transition-colors group-hover:border-white/25 group-hover:text-foreground/80 sm:text-[10px]"
             >
               {s}
             </span>

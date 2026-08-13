@@ -10,6 +10,21 @@ import {
 } from "framer-motion";
 import { useContent } from "@/lib/i18n";
 
+// One shared Unsplash URL for both the full-bleed background and the window
+// scene, so the browser hits the cache instead of downloading twice. srcSet
+// serves a much smaller variant on phones (350–450 KB vs ~1 MB at w=2600).
+const CLOUD_BASE =
+  "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&q=80";
+const CLOUD_SRC = {
+  default: `${CLOUD_BASE}&w=1600`,
+  srcSet: [
+    `${CLOUD_BASE}&w=800 800w`,
+    `${CLOUD_BASE}&w=1200 1200w`,
+    `${CLOUD_BASE}&w=1800 1800w`,
+    `${CLOUD_BASE}&w=2400 2400w`,
+  ].join(", "),
+} as const;
+
 type MarqueeItem = { label: string; accent?: boolean; mono?: boolean };
 const marqueeItems: MarqueeItem[] = [
   { label: "Fullstack", accent: true },
@@ -29,6 +44,8 @@ const marqueeItems: MarqueeItem[] = [
 export function Hero() {
   const c = useContent();
   const ref = useRef<HTMLElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  const [marqueePaused, setMarqueePaused] = useState(false);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -79,20 +96,38 @@ export function Hero() {
     return () => window.removeEventListener("pointermove", onMove);
   }, [mx, my]);
 
+  // Pause the marquee when it scrolls off-screen — the animation runs on the
+  // GPU forever otherwise, draining battery on mobile.
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setMarqueePaused(!entry.isIntersecting),
+      { rootMargin: "50px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section
       id="top"
       ref={ref}
-      className="relative flex min-h-screen w-full flex-col overflow-hidden bg-[#1a2540]"
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#1a2540]"
     >
-      {/* Full-bleed sky/clouds background — you're floating among the clouds */}
+      {/* Full-bleed sky/clouds background — you're floating among the clouds.
+          Same URL as SkyCloudScene below so browsers reuse the cache; a srcSet
+          serves a much smaller image on phones. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2600&q=85"
+        src={CLOUD_SRC.default}
+        srcSet={CLOUD_SRC.srcSet}
+        sizes="100vw"
         alt=""
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         loading="eager"
+        fetchPriority="high"
       />
 
       {/* Slight darkening for text contrast and atmosphere */}
@@ -155,7 +190,7 @@ export function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="relative w-full max-w-xl"
-          style={{ height: "min(82vh, 800px)" }}
+          style={{ height: "min(82svh, 800px)" }}
         >
           <AirplaneWindow sceneX={sceneX} sceneY={sceneY}>
             <HeroContent />
@@ -165,6 +200,7 @@ export function Hero() {
 
       {/* Bottom marquee — polished with fade masks and mixed treatments */}
       <motion.div
+        ref={marqueeRef}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.8 }}
@@ -183,12 +219,16 @@ export function Hero() {
               "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
           }}
         >
-          <div className="marquee flex shrink-0 items-center whitespace-nowrap">
+          <div
+            className="marquee flex shrink-0 items-center whitespace-nowrap"
+            style={{ animationPlayState: marqueePaused ? "paused" : "running" }}
+          >
             <MarqueeRow />
           </div>
           <div
             className="marquee flex shrink-0 items-center whitespace-nowrap"
             aria-hidden
+            style={{ animationPlayState: marqueePaused ? "paused" : "running" }}
           >
             <MarqueeRow />
           </div>
@@ -215,7 +255,7 @@ function HeroContent() {
           <RevealWord
             text="Bozhidar"
             delay={0.5}
-            className="text-[clamp(3rem,7.5vw,6rem)]"
+            className="text-[clamp(2.5rem,8vw,6rem)]"
           />
           <RevealWord
             text="Ivanov"
@@ -500,10 +540,13 @@ function SkyCloudScene() {
         }}
       />
 
-      {/* Real cloud photograph — this is the star of the show */}
+      {/* Real cloud photograph — this is the star of the show.
+          Same URL as the outer full-bleed image → free browser cache hit. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=2400&q=90"
+        src={CLOUD_SRC.default}
+        srcSet={CLOUD_SRC.srcSet}
+        sizes="(max-width: 640px) 100vw, 640px"
         alt=""
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
