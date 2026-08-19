@@ -89,7 +89,8 @@ export function Contact() {
           </a>
           <a
             href={c.personal.cv}
-            download
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.02] px-7 py-4 text-sm text-foreground/90 backdrop-blur-md transition-all hover:border-white/40 hover:bg-white/5"
           >
             <FileDown className="h-4 w-4" />

@@ -203,7 +203,7 @@ const shared = {
   phone: "0762 20 80 52",
   github: "https://github.com/b1-loop",
   linkedin: "https://www.linkedin.com/in/bozhidar-ivanov-48158637b",
-  cv: "/cv.pdf",
+  cv: "/bozhidar-ivanov-cv.pdf",
   cal: "https://cal.com/bojidarivanov-98-mkhv6b",
 } as const;
 
