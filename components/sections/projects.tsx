@@ -10,6 +10,7 @@ import type { Project } from "@/lib/content";
 // Colored gradient per project — used in the visual header of each card
 function accentFor(type: string): string {
   const k = type.toLowerCase();
+  if (k.includes("saas") || k.includes("edtech")) return "#2dd4bf"; // teal
   if (k.includes("fintech") || k.includes("pay")) return "#7dd3fc"; // cyan
   if (k.includes("ai") || k.includes("assist")) return "#a78bfa"; // purple
   if (k.includes("client") || k.includes("kund")) return "#fbbf24"; // amber
@@ -61,7 +62,9 @@ export function Projects() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-12">
           {c.projects.map((p, i) => {
-            const span = p.featured
+            const span = p.flagship
+              ? "sm:col-span-2 md:col-span-6 lg:col-span-12"
+              : p.featured
               ? "sm:col-span-2 md:col-span-6 lg:col-span-6"
               : "md:col-span-3 lg:col-span-4";
             return (
@@ -179,8 +182,11 @@ function ProjectCard({
         )}
       </div>
 
-      {/* Card body */}
-      <div className="p-6">
+      {/* Card body — text beside the demo video on wide screens */}
+      <div
+        className={`p-6 ${project.video ? "lg:grid lg:grid-cols-[1fr_minmax(0,420px)] lg:items-start lg:gap-10" : ""}`}
+      >
+        <div>
         <h3 className="font-display text-2xl leading-tight tracking-tight text-foreground transition-colors group-hover:text-white md:text-3xl">
           {project.name}
         </h3>
@@ -240,6 +246,20 @@ function ProjectCard({
             </a>
           )}
         </div>
+        </div>
+
+        {project.video && (
+          // preload="none" so the 20 MB demo only downloads when played
+          <video
+            src={project.video}
+            poster={project.poster}
+            controls
+            playsInline
+            preload="none"
+            className="mt-6 aspect-square w-full rounded-xl border border-white/10 bg-black object-cover lg:mt-0"
+            aria-label={`${project.name} demo video`}
+          />
+        )}
       </div>
     </motion.article>
   );

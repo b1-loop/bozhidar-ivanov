@@ -64,6 +64,10 @@ export type Project = {
   demo?: string;
   live?: boolean;
   featured?: boolean;
+  // Full-width card at the top of the grid
+  flagship?: boolean;
+  video?: string;
+  poster?: string;
   slug?: string;
   caseStudy?: CaseStudy;
 };
@@ -341,6 +345,29 @@ export const content: Record<Locale, Content> = {
     ],
     learning: ["Kubernetes", "gRPC", "Domain-Driven Design", "Microservices"],
     projects: [
+      {
+        name: "DOJO Future",
+        type: "EdTech SaaS · InFiNet Code",
+        description:
+          "School platform for Swedish vocational colleges (YH) — admissions, steering group, internships (LIA), finance and learning in one modular system.",
+        stack: ["Next.js", "Tailwind CSS", "SaaS", "i18n"],
+        demo: "https://dofu.se/en",
+        live: true,
+        featured: true,
+        flagship: true,
+      },
+      {
+        name: "Jarvis Desktop",
+        type: "Desktop AI · Python + C++",
+        description:
+          "Voice-controlled AI assistant for Windows — Python is the conductor, C++ is the muscle. Wake word, barge-in and a local LLM agent with 63 tools, no cloud required.",
+        stack: ["Python 3.12", "C++20", "pybind11", "Ollama", "ONNX Runtime", "whisper", "Dear ImGui"],
+        github: "https://github.com/b1-loop/jarvis-desktop",
+        featured: true,
+        flagship: true,
+        video: "/projects/jarvis-desktop-demo.mp4",
+        poster: "/projects/jarvis-desktop-poster.png",
+      },
       {
         name: "Onio",
         type: "Client Website",
@@ -820,6 +847,29 @@ export const content: Record<Locale, Content> = {
     ],
     learning: ["Kubernetes", "gRPC", "Domain-Driven Design", "Microservices"],
     projects: [
+      {
+        name: "DOJO Future",
+        type: "EdTech SaaS · InFiNet Code",
+        description:
+          "Skolsystem för YH-skolor — antagning, ledningsgrupp, LIA, ekonomi och lärande i ett modulärt system.",
+        stack: ["Next.js", "Tailwind CSS", "SaaS", "i18n"],
+        demo: "https://dofu.se/sv",
+        live: true,
+        featured: true,
+        flagship: true,
+      },
+      {
+        name: "Jarvis Desktop",
+        type: "Desktop AI · Python + C++",
+        description:
+          "Röststyrd AI-assistent för Windows — Python dirigerar, C++ gör grovjobbet. Väckord, avbrott mitt i meningen och en lokal LLM-agent med 63 verktyg, helt utan moln.",
+        stack: ["Python 3.12", "C++20", "pybind11", "Ollama", "ONNX Runtime", "whisper", "Dear ImGui"],
+        github: "https://github.com/b1-loop/jarvis-desktop",
+        featured: true,
+        flagship: true,
+        video: "/projects/jarvis-desktop-demo.mp4",
+        poster: "/projects/jarvis-desktop-poster.png",
+      },
       {
         name: "Onio",
         type: "Kundwebbplats",
