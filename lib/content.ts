@@ -68,6 +68,8 @@ export type Project = {
   flagship?: boolean;
   video?: string;
   poster?: string;
+  // Landscape (16:9) demo instead of the default square crop
+  wideVideo?: boolean;
   slug?: string;
   caseStudy?: CaseStudy;
 };
@@ -367,6 +369,34 @@ export const content: Record<Locale, Content> = {
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
         poster: "/projects/jarvis-desktop-poster.png",
+      },
+      {
+        name: "Zoki Städ i Väst",
+        type: "Client Website · Next.js",
+        description:
+          "Website for a Gothenburg cleaning company — bold scroll-driven motion and an interactive “wipe the window” section where visitors clean dirty glass with their cursor or finger.",
+        stack: ["Next.js 16", "React 19", "Tailwind CSS 4", "Motion", "Lenis", "Canvas"],
+        demo: "https://zoki-stad-vast.vercel.app",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/zoki-stad-vast-demo.mp4",
+        poster: "/projects/zoki-stad-vast-poster.jpg",
+        wideVideo: true,
+      },
+      {
+        name: "Digital Teknik Göteborg",
+        type: "Concept Website · Three.js",
+        description:
+          "Concept site for an electrical & AV company in Mölndal — a WebGL particle hologram that morphs between a light bulb, socket, lightning bolt and screen, with cursor-reactive particles.",
+        stack: ["React 19", "TypeScript", "Vite", "Three.js", "React Three Fiber", "Framer Motion", "Lenis"],
+        demo: "https://digital-teknik-gbg.vercel.app",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/digital-teknik-gbg-demo.mp4",
+        poster: "/projects/digital-teknik-gbg-poster.jpg",
+        wideVideo: true,
       },
       {
         name: "Onio",
@@ -869,6 +899,34 @@ export const content: Record<Locale, Content> = {
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
         poster: "/projects/jarvis-desktop-poster.png",
+      },
+      {
+        name: "Zoki Städ i Väst",
+        type: "Kundwebbplats · Next.js",
+        description:
+          "Webbplats för ett städföretag i Göteborg — kraftfulla scrollanimationer och en interaktiv ”putsa fönstret”-sektion där besökaren torkar rent smutsigt glas med muspekaren eller fingret.",
+        stack: ["Next.js 16", "React 19", "Tailwind CSS 4", "Motion", "Lenis", "Canvas"],
+        demo: "https://zoki-stad-vast.vercel.app",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/zoki-stad-vast-demo.mp4",
+        poster: "/projects/zoki-stad-vast-poster.jpg",
+        wideVideo: true,
+      },
+      {
+        name: "Digital Teknik Göteborg",
+        type: "Konceptsajt · Three.js",
+        description:
+          "Konceptsajt för ett el- och AV-företag i Mölndal — ett WebGL-partikelhologram som morfar mellan glödlampa, uttag, blixt och skärm, med partiklar som reagerar på muspekaren.",
+        stack: ["React 19", "TypeScript", "Vite", "Three.js", "React Three Fiber", "Framer Motion", "Lenis"],
+        demo: "https://digital-teknik-gbg.vercel.app",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/digital-teknik-gbg-demo.mp4",
+        poster: "/projects/digital-teknik-gbg-poster.jpg",
+        wideVideo: true,
       },
       {
         name: "Onio",

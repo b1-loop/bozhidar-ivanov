@@ -184,7 +184,7 @@ function ProjectCard({
 
       {/* Card body — text beside the demo video on wide screens */}
       <div
-        className={`p-6 ${project.video ? "lg:grid lg:grid-cols-[1fr_minmax(0,420px)] lg:items-start lg:gap-10" : ""}`}
+        className={`p-6 ${project.video ? `lg:grid ${project.wideVideo ? "lg:grid-cols-[1fr_minmax(0,560px)]" : "lg:grid-cols-[1fr_minmax(0,420px)]"} lg:items-start lg:gap-10` : ""}`}
       >
         <div>
         <h3 className="font-display text-2xl leading-tight tracking-tight text-foreground transition-colors group-hover:text-white md:text-3xl">
@@ -249,14 +249,14 @@ function ProjectCard({
         </div>
 
         {project.video && (
-          // preload="none" so the 20 MB demo only downloads when played
+          // preload="none" so the demo only downloads when played
           <video
             src={project.video}
             poster={project.poster}
             controls
             playsInline
             preload="none"
-            className="mt-6 aspect-square w-full rounded-xl border border-white/10 bg-black object-cover lg:mt-0"
+            className={`mt-6 ${project.wideVideo ? "aspect-video" : "aspect-square"} w-full rounded-xl border border-white/10 bg-black object-cover lg:mt-0`}
             aria-label={`${project.name} demo video`}
           />
         )}
