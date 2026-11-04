@@ -399,6 +399,20 @@ export const content: Record<Locale, Content> = {
         wideVideo: true,
       },
       {
+        name: "CosmetiSM",
+        type: "Client Website · Next.js",
+        description:
+          "Production site for an EU cosmetic safety consultancy, live at cosmetism.com — a pricing explorer that live-computes the CPSR tier from an ingredient slider, scroll-driven storytelling, pointer-parallax hero and a validated contact form, in four languages.",
+        stack: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "next-intl", "Motion", "Lenis", "Radix UI", "Zod"],
+        demo: "https://cosmetism.com",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/cosmetism-demo.mp4",
+        poster: "/projects/cosmetism-poster.jpg",
+        wideVideo: true,
+      },
+      {
         name: "Onio",
         type: "Client Website",
         description:
@@ -926,6 +940,20 @@ export const content: Record<Locale, Content> = {
         flagship: true,
         video: "/projects/digital-teknik-gbg-demo.mp4",
         poster: "/projects/digital-teknik-gbg-poster.jpg",
+        wideVideo: true,
+      },
+      {
+        name: "CosmetiSM",
+        type: "Kundwebbplats · Next.js",
+        description:
+          "Produktionssajt för en konsultbyrå inom kosmetikasäkerhet i EU, live på cosmetism.com — en prisutforskare som räknar fram CPSR-nivå direkt från ett ingrediensreglage, scrollstyrd storytelling, hero med pekarparallax och ett validerat kontaktformulär, på fyra språk.",
+        stack: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "next-intl", "Motion", "Lenis", "Radix UI", "Zod"],
+        demo: "https://cosmetism.com",
+        live: true,
+        featured: true,
+        flagship: true,
+        video: "/projects/cosmetism-demo.mp4",
+        poster: "/projects/cosmetism-poster.jpg",
         wideVideo: true,
       },
       {
