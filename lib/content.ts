@@ -230,7 +230,7 @@ export const content: Record<Locale, Content> = {
   en: {
     personal: {
       ...shared,
-      role: "Fullstack .NET Developer · AI-driven platforms",
+      role: "Fullstack .NET Developer · AI-driven platforms · Software Engineer",
       tagline: "Built by discipline. Shaped by code.",
       location: "Gothenburg, Sweden",
       coordsCity: "Gothenburg, SE",
@@ -864,7 +864,7 @@ export const content: Record<Locale, Content> = {
   sv: {
     personal: {
       ...shared,
-      role: "Fullstack .NET-utvecklare · AI-drivna plattformar",
+      role: "Fullstack .NET-utvecklare · AI-drivna plattformar · Software Engineer",
       tagline: "Byggd av disciplin. Formad av kod.",
       location: "Göteborg, Sverige",
       coordsCity: "Göteborg, SE",

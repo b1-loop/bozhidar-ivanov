@@ -27,6 +27,9 @@ type Message = {
 
 const NUDGE_KEY = "bi-bot-nudged";
 
+/** Fire `window.dispatchEvent(new Event(OPEN_BOT_EVENT))` to open B1 from anywhere (e.g. the cabin call button). */
+export const OPEN_BOT_EVENT = "b1:open";
+
 /* -------------------------------------------------------------------------- */
 /*  Humanoid head — white ceramic shell, glowing gold cores, facing viewer    */
 /* -------------------------------------------------------------------------- */
@@ -388,6 +391,13 @@ function AiBotInner({ locale }: { locale: Locale }) {
     setHovered(false);
     if (messages.length === 0 && !thinking) pushBot(copy.greeting, undefined, 500);
   }, [messages.length, thinking, pushBot, copy.greeting]);
+
+  // Other parts of the page (the cabin call button) can open the chat
+  useEffect(() => {
+    const onOpen = () => openPanel();
+    window.addEventListener(OPEN_BOT_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_BOT_EVENT, onOpen);
+  }, [openPanel]);
 
   const closePanel = useCallback(() => {
     setOpen(false);

@@ -169,6 +169,21 @@ body {
   background-size: 200px 200px;
 }
 
+/* Night flight — twinkling stars and wing navigation lights */
+@keyframes night-twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.night-twinkle { animation: night-twinkle 4.5s ease-in-out infinite; }
+/* Navigation light: steady red, white strobe double-flash every ~2.4s */
+@keyframes wing-strobe {
+  0%, 6%, 12%, 100% { opacity: 0; }
+  3%, 9% { opacity: 1; }
+}
+.wing-strobe { animation: wing-strobe 2.4s linear infinite; }
+@keyframes wing-nav { 0%, 100% { opacity: 0.9; } 50% { opacity: 0.6; } }
+.wing-nav { animation: wing-nav 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .night-twinkle, .wing-strobe, .wing-nav { animation: none; }
+}
+
 /* B1 bot — idle motion in CSS so it never costs main-thread JS */
 @keyframes bot-spin { to { transform: rotate(360deg); } }
 @keyframes bot-pulse {

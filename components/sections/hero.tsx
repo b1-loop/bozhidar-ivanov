@@ -2,29 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  animate,
   motion,
   useMotionValue,
   useScroll,
   useSpring,
   useTransform,
 } from "framer-motion";
-import { useContent } from "@/lib/i18n";
+import { useContent, useLocale } from "@/lib/i18n";
 import { IntroReplay } from "@/components/boot-intro";
+import { TWINKLE_STARS, WingTip } from "@/components/night-sky";
+import { PsuPanel } from "@/components/psu-panel";
 
-// One shared Unsplash URL for both the full-bleed background and the window
-// scene, so the browser hits the cache instead of downloading twice. srcSet
-// serves a much smaller variant on phones (350–450 KB vs ~1 MB at w=2600).
-const CLOUD_BASE =
-  "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&q=80";
-const CLOUD_SRC = {
-  default: `${CLOUD_BASE}&w=1600`,
-  srcSet: [
-    `${CLOUD_BASE}&w=800 800w`,
-    `${CLOUD_BASE}&w=1200 1200w`,
-    `${CLOUD_BASE}&w=1800 1800w`,
-    `${CLOUD_BASE}&w=2400 2400w`,
-  ].join(", "),
-} as const;
+// Aurora borealis — photo by Luke Stackpoole on Unsplash (Unsplash License).
+// A landscape crop fills the background, the full portrait frame fills the window.
+const AURORA_WIDE = {
+  src: "/hero/aurora-wide-2400.jpg",
+  srcSet: "/hero/aurora-wide-1200.jpg 1200w, /hero/aurora-wide-2400.jpg 2400w",
+};
+const AURORA_WINDOW = {
+  src: "/hero/aurora-window-1200.jpg",
+  srcSet: "/hero/aurora-window-700.jpg 700w, /hero/aurora-window-1200.jpg 1200w",
+};
 
 type MarqueeItem = { label: string; accent?: boolean; mono?: boolean };
 const marqueeItems: MarqueeItem[] = [
@@ -114,15 +113,13 @@ export function Hero() {
     <section
       id="top"
       ref={ref}
-      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#1a2540]"
+      className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#03050b]"
     >
-      {/* Full-bleed sky/clouds background — you're floating among the clouds.
-          Same URL as SkyCloudScene below so browsers reuse the cache; a srcSet
-          serves a much smaller image on phones. */}
+      {/* Full-bleed aurora sky — we're on a night flight */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={CLOUD_SRC.default}
-        srcSet={CLOUD_SRC.srcSet}
+        src={AURORA_WIDE.src}
+        srcSet={AURORA_WIDE.srcSet}
         sizes="100vw"
         alt=""
         aria-hidden
@@ -137,17 +134,17 @@ export function Hero() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(10,15,30,0.35) 0%, rgba(10,15,30,0.2) 40%, rgba(10,15,30,0.45) 100%)",
+            "linear-gradient(to bottom, rgba(3,5,12,0.45) 0%, rgba(3,5,12,0.3) 40%, rgba(3,5,12,0.7) 100%)",
         }}
       />
 
-      {/* Cool light halo around where the window will sit */}
+      {/* Aurora-green light halo around where the window sits */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0 opacity-50"
         style={{
           background:
-            "radial-gradient(45% 55% at 50% 50%, rgba(180,210,240,0.25) 0%, transparent 65%)",
+            "radial-gradient(45% 55% at 50% 50%, rgba(52,211,153,0.16) 0%, rgba(34,211,238,0.06) 40%, transparent 65%)",
         }}
       />
 
@@ -183,19 +180,24 @@ export function Hero() {
           <div className="mt-1 tabular-nums text-white">{time}</div>
         </motion.div>
       </div>
+
+      {/* Overhead passenger service unit — cabin buttons, remixed for the portfolio */}
+      <div className="absolute inset-x-0 top-[82px] z-30 flex justify-center px-3 md:top-[86px]">
+        <PsuPanel />
+      </div>
       </IntroReplay>
 
       {/* The airplane window */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 mx-auto flex w-full flex-1 items-center justify-center will-change-transform px-3 pt-32 pb-6 sm:px-4 sm:pt-28 sm:pb-8 md:px-10"
+        className="relative z-10 mx-auto flex w-full flex-1 items-center justify-center will-change-transform px-3 pt-[150px] pb-6 sm:px-4 sm:pt-[158px] sm:pb-8 md:px-10"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="relative w-full max-w-xl"
-          style={{ height: "min(82svh, 800px)" }}
+          style={{ height: "min(78svh, 780px)" }}
         >
           <AirplaneWindow sceneX={sceneX} sceneY={sceneY}>
             <IntroReplay>
@@ -288,7 +290,7 @@ function HeroContent() {
         className="mt-5 max-w-md font-display text-xl italic text-white md:text-2xl"
         style={{
           textShadow:
-            "0 2px 20px rgba(0,0,0,0.85), 0 4px 40px rgba(0,0,0,0.5)",
+            "0 1px 3px rgba(0,0,0,0.9), 0 2px 20px rgba(0,0,0,0.85), 0 4px 40px rgba(0,0,0,0.5)",
         }}
       >
         {c.personal.tagline}
@@ -297,19 +299,12 @@ function HeroContent() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.7 }}
-        className="mt-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.22em] text-white/80 sm:tracking-[0.35em]"
-        style={{ textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}
+        className="mt-3 font-mono text-[10px] font-medium uppercase leading-relaxed tracking-[0.22em] text-white sm:text-[11px] sm:tracking-[0.35em]"
+        style={{ textShadow: "0 1px 2px rgba(0,0,0,0.95), 0 2px 14px rgba(0,0,0,0.85)" }}
       >
-        {c.personal.role.split(" · ").map((part, i, parts) => (
+        {c.personal.role.split(" · ").map((part) => (
           <span key={part} className="block">
             {part}
-            {i === parts.length - 1 && (
-              // City only where there's room — on phones it would wrap the line
-              <span className="hidden sm:inline">
-                <span className="mx-2 text-white/40">·</span>
-                {c.personal.coordsCity.split(",")[0]}
-              </span>
-            )}
           </span>
         ))}
       </motion.p>
@@ -337,112 +332,141 @@ function AirplaneWindow({
   sceneX: ReturnType<typeof useMotionValue<number>>;
   sceneY: ReturnType<typeof useMotionValue<number>>;
 }) {
+  // Frame depths scale with the viewport so the window keeps its proportions on phones
+  const depth = {
+    reveal: "clamp(12px, 3.4vw, 22px)", // cabin panel → start of the tunnel
+    gasket: "clamp(25px, 6.6vw, 44px)", // rubber seal around the glass
+    glass: "clamp(31px, 8vw, 52px)", // inner scratch pane
+  };
+
   return (
     <div className="relative mx-auto h-full w-full">
-      {/* Halo — cool daylight spilling around the window */}
+      {/* Halo — aurora light spilling around the window */}
       <div
         aria-hidden
         className="pointer-events-none absolute -inset-24 rounded-[42%/32%] opacity-70 blur-3xl"
         style={{
           background:
-            "radial-gradient(50% 50% at 50% 50%, rgba(180,210,240,0.35) 0%, rgba(120,160,200,0.15) 45%, transparent 75%)",
+            "radial-gradient(50% 50% at 50% 50%, rgba(52,211,153,0.28) 0%, rgba(34,211,238,0.12) 45%, transparent 75%)",
         }}
       />
 
-      {/* Layer 1 — outermost cabin panel (warm cream plastic, real airplane color) */}
+      {/* 1 — Cabin wall panel: matte light-grey plastic, softly moulded edge */}
       <div
         className="absolute inset-0 rounded-[42%/32%]"
         style={{
           background:
-            "linear-gradient(160deg, #e8dccb 0%, #d8ccb8 15%, #c8bca6 32%, #b5a892 50%, #a89a83 70%, #c0b39c 88%, #ddd0bc 100%)",
+            "radial-gradient(120% 90% at 30% 15%, #e4e2dd 0%, #cfccc6 35%, #b4b1aa 70%, #9d9a93 100%)",
           boxShadow:
             "0 60px 160px -30px rgba(0,0,0,0.85), " +
-            "0 0 0 1px rgba(0,0,0,0.2) inset, " +
-            "0 5px 0 rgba(255,255,255,0.4) inset, " +
-            "0 -5px 0 rgba(0,0,0,0.4) inset",
+            "0 0 0 1px rgba(0,0,0,0.35), " +
+            "inset 0 3px 2px rgba(255,255,255,0.45), " +
+            "inset 0 -4px 6px rgba(0,0,0,0.35)",
         }}
       />
-
-      {/* Subtle panel texture — mold lines / matte plastic grain */}
+      {/* matte plastic grain */}
+      <div className="noise rounded-[42%/32%] opacity-40" />
+      {/* night cabin: lights dimmed, cool aurora light on the plastic */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[42%/32%] opacity-30"
+        className="pointer-events-none absolute inset-0 rounded-[42%/32%]"
         style={{
           background:
-            "repeating-linear-gradient(45deg, transparent 0, transparent 3px, rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 4px), " +
-            "radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.15) 0%, transparent 40%)",
+            "linear-gradient(170deg, rgba(10,16,32,0.42) 0%, rgba(10,16,32,0.58) 55%, rgba(4,8,16,0.72) 100%)",
         }}
       />
 
-      {/* Layer 2 — recessed ring (subtle inner shadow zone) */}
+      {/* 2 — Window reveal: the tunnel narrowing towards the glass.
+          Top wall in shadow, bottom sill catching the cabin light. */}
       <div
-        className="absolute inset-[10px] rounded-[41%/31%]"
+        className="absolute rounded-[41%/31%]"
         style={{
+          inset: depth.reveal,
           background:
-            "linear-gradient(170deg, #b5a891 0%, #96896f 40%, #877a60 60%, #a4977c 100%)",
+            "linear-gradient(to bottom, #1c2024 0%, #2f3439 28%, #4a5056 62%, #6c7278 88%, #80868b 100%)",
           boxShadow:
-            "inset 0 3px 6px rgba(0,0,0,0.4), " +
-            "inset 0 -2px 3px rgba(255,255,255,0.15), " +
-            "0 0 0 1px rgba(0,0,0,0.25)",
+            "inset 0 16px 26px rgba(0,0,0,0.6), " +
+            "inset 0 -3px 8px rgba(255,255,255,0.12), " +
+            "inset 0 0 0 1px rgba(0,0,0,0.5), " +
+            "0 1px 0 rgba(255,255,255,0.18)",
         }}
       />
-
-      {/* Layer 3 — top shade retraction slot (subtle horizontal groove) */}
+      {/* aurora light reflecting off the tunnel walls next to the glass */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 h-1 w-24 -translate-x-1/2 rounded-full"
+        className="pointer-events-none absolute rounded-[41%/31%]"
         style={{
-          top: "18px",
+          inset: depth.reveal,
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.25) 100%)",
-          boxShadow: "0 1px 0 rgba(255,255,255,0.35)",
+            "radial-gradient(closest-side, transparent 72%, rgba(52,211,153,0.16) 92%, rgba(52,211,153,0.05) 100%)",
         }}
       />
 
-      {/* Layer 4 — inner black rubber/plastic bezel around the glass */}
+      {/* 3 — Rubber gasket sealing the pane */}
       <div
-        className="absolute inset-[22px] rounded-[40%/30%]"
+        className="absolute rounded-[40%/30%]"
         style={{
-          background:
-            "linear-gradient(160deg, #24242a 0%, #101013 30%, #050506 55%, #14141a 80%, #26262c 100%)",
+          inset: depth.gasket,
+          background: "linear-gradient(to bottom, #050608 0%, #0d1013 60%, #171b20 100%)",
           boxShadow:
-            "inset 0 0 0 1px rgba(0,0,0,0.7), " +
-            "inset 0 4px 6px rgba(0,0,0,0.75), " +
-            "inset 0 -3px 4px rgba(255,255,255,0.08), " +
-            "0 0 0 1px rgba(255,255,255,0.18)",
+            "inset 0 3px 5px rgba(0,0,0,0.85), " +
+            "0 0 0 1px rgba(255,255,255,0.07), " +
+            "0 -1px 0 rgba(0,0,0,0.6)",
         }}
       />
 
-      {/* Layer 5 — bright bezel highlight ring (chrome/gloss) */}
+      {/* 4 — The glass (inner scratch pane in front of the outer pane) */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-[30px] rounded-[39%/29%]"
+        className="absolute overflow-hidden rounded-[39%/29%]"
         style={{
+          inset: depth.glass,
           boxShadow:
-            "inset 0 2px 0 rgba(255,255,255,0.3), " +
-            "inset 0 0 0 1px rgba(255,255,255,0.15)",
-        }}
-      />
-
-      {/* Layer 6 — inner glass viewport (double-pane feel) */}
-      <div
-        className="absolute inset-[34px] overflow-hidden rounded-[38%/28%]"
-        style={{
-          boxShadow:
-            "inset 0 4px 0 rgba(255,255,255,0.28), " +
-            "inset 0 -8px 40px rgba(0,0,0,0.4), " +
-            "inset 0 0 0 1px rgba(255,255,255,0.1), " +
-            "inset 0 0 15px rgba(255,255,255,0.05)",
+            "inset 0 3px 0 rgba(255,255,255,0.18), " +
+            "inset 0 -10px 40px rgba(0,0,0,0.45), " +
+            "inset 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
-        {/* The daytime sky and clouds — parallaxed slightly by mouse */}
+        {/* Aurora through the window — parallaxed slightly by mouse */}
         <motion.div
           aria-hidden
           style={{ x: sceneX, y: sceneY }}
           className="absolute -inset-8"
         >
-          <SkyCloudScene />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={AURORA_WINDOW.src}
+            srcSet={AURORA_WINDOW.srcSet}
+            sizes="(max-width: 640px) 100vw, 640px"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+          />
+          {/* the photo already has stars — just add a few that twinkle */}
+          <div className="night-twinkle absolute inset-0" style={{ backgroundImage: TWINKLE_STARS }} />
         </motion.div>
+
+        {/* The wing outside, with its blinking navigation light */}
+        <WingTip />
+
+        {/* Edge of the outer pane, seen through the scratch pane */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-[5%] rounded-[38%/28%]"
+          style={{
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.06), inset 0 0 18px rgba(200,230,255,0.06)",
+          }}
+        />
+
+        {/* Frost / condensation creeping in from the edges of the pane */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(75% 65% at 50% 48%, transparent 62%, rgba(200,225,255,0.10) 80%, rgba(220,235,255,0.24) 100%)",
+          }}
+        />
 
         {/* Very subtle glass tint */}
         <div
@@ -450,7 +474,7 @@ function AirplaneWindow({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(200,220,240,0.06) 0%, transparent 40%, rgba(20,40,80,0.08) 100%)",
+              "linear-gradient(to bottom, rgba(160,200,240,0.05) 0%, transparent 40%, rgba(10,20,50,0.12) 100%)",
           }}
         />
 
@@ -460,27 +484,19 @@ function AirplaneWindow({
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(40% 32% at 50% 45%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.12) 60%, transparent 85%)",
+              "radial-gradient(55% 42% at 50% 50%, rgba(2,6,10,0.62) 0%, rgba(2,6,10,0.32) 55%, transparent 88%)",
           }}
         />
 
-        {/* Diagonal glass reflection (top-left) */}
+        {/* Cabin reflection on the plastic pane: soft diagonal sheen + a faint second (double-pane) ghost */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.06) 20%, transparent 45%)",
-          }}
-        />
-
-        {/* Curved top-edge highlight */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-1/3"
-          style={{
-            background:
-              "radial-gradient(80% 100% at 50% 0%, rgba(255,255,255,0.2) 0%, transparent 65%)",
+              "linear-gradient(118deg, transparent 18%, rgba(255,255,255,0.07) 24%, transparent 31%), " +
+              "linear-gradient(118deg, transparent 33%, rgba(255,255,255,0.035) 37%, transparent 42%), " +
+              "linear-gradient(135deg, rgba(255,255,255,0.10) 0%, transparent 30%)",
           }}
         />
 
@@ -490,120 +506,171 @@ function AirplaneWindow({
           className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4"
           style={{
             background:
-              "radial-gradient(80% 100% at 50% 100%, rgba(0,0,0,0.25) 0%, transparent 65%)",
+              "radial-gradient(80% 100% at 50% 100%, rgba(0,0,0,0.3) 0%, transparent 65%)",
           }}
         />
 
         {/* Fine grain */}
         <div className="noise opacity-20" />
 
+        {/* Breather hole — sits in the inner scratch pane, lower centre */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-[4.5%] left-1/2 z-20 h-[7px] w-[7px] -translate-x-1/2 rounded-full"
+          style={{
+            background: "radial-gradient(circle at 40% 35%, #1b1f24 0%, #050607 70%)",
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.12), inset 0 1px 1px rgba(0,0,0,0.9), 0 1px 1px rgba(255,255,255,0.08)",
+          }}
+        />
+
         {/* Content overlay */}
         <div className="relative z-10 flex h-full w-full items-center justify-center">
           {children}
         </div>
+
+        {/* Window shade — drag it up and down */}
+        <WindowShade />
       </div>
 
-      {/* Little breather hole at the bottom center — real airplane windows have this */}
-      <div
-        aria-hidden
-        className="absolute left-1/2 h-3 w-3 -translate-x-1/2 rounded-full"
-        style={{
-          bottom: "10px",
-          background:
-            "radial-gradient(circle at 30% 30%, #0a0a0a 0%, #030303 55%, #000 100%)",
-          boxShadow:
-            "0 0 0 1px rgba(0,0,0,0.6), " +
-            "0 1px 2px rgba(255,255,255,0.15), " +
-            "inset 0 1px 3px rgba(255,255,255,0.25), " +
-            "inset 0 -1px 2px rgba(0,0,0,0.8)",
-        }}
-      />
-
-      {/* Two small hex screws — top-left and bottom-right (subtle) */}
+      {/* Two small screws in the cabin panel */}
       <div
         aria-hidden
         className="absolute h-1.5 w-1.5 rounded-full opacity-70"
         style={{
-          top: "14px",
-          right: "36px",
-          background: "radial-gradient(circle at 30% 30%, #756a55, #453e30)",
-          boxShadow: "inset 0 1px 1px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.2)",
+          top: "12px",
+          right: "22%",
+          background: "radial-gradient(circle at 30% 30%, #8a8d91, #45484c)",
+          boxShadow: "inset 0 1px 1px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.15)",
         }}
       />
       <div
         aria-hidden
         className="absolute h-1.5 w-1.5 rounded-full opacity-70"
         style={{
-          bottom: "14px",
-          left: "36px",
-          background: "radial-gradient(circle at 30% 30%, #756a55, #453e30)",
-          boxShadow: "inset 0 1px 1px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.2)",
+          bottom: "12px",
+          left: "22%",
+          background: "radial-gradient(circle at 30% 30%, #8a8d91, #45484c)",
+          boxShadow: "inset 0 1px 1px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.15)",
         }}
       />
     </div>
   );
 }
 
-function SkyCloudScene() {
+/* -------------------------------------------------------------------------- */
+/*  Draggable window shade                                                    */
+/* -------------------------------------------------------------------------- */
+
+const SHADE_MIN = 0.06; // fully up: only the lip peeks out
+const SHADE_REST = 0.11; // where it starts
+const SHADE_MAX = 0.97; // fully down
+
+function WindowShade() {
+  const { locale } = useLocale();
+  const shade = useMotionValue(SHADE_REST);
+  const height = useTransform(shade, (v) => `${v * 100}%`);
+  const [pct, setPct] = useState(Math.round(SHADE_REST * 100));
+  const [dragging, setDragging] = useState(false);
+  const [touched, setTouched] = useState(false);
+  const drag = useRef<{ startY: number; start: number; h: number } | null>(null);
+
+  const clamp = (v: number) => Math.min(SHADE_MAX, Math.max(SHADE_MIN, v));
+  const set = (v: number) => {
+    shade.set(clamp(v));
+    setPct(Math.round(clamp(v) * 100));
+  };
+  const springTo = (v: number) => {
+    animate(shade, clamp(v), { type: "spring", stiffness: 180, damping: 22 });
+    setPct(Math.round(clamp(v) * 100));
+  };
+
+  const hint = locale === "sv" ? "Dra i gardinen ↕" : "Drag the shade ↕";
+
   return (
-    <div className="absolute inset-0">
-      {/* Sky gradient base */}
+    <motion.div
+      role="slider"
+      tabIndex={0}
+      aria-label={locale === "sv" ? "Fönstergardin" : "Window shade"}
+      aria-orientation="vertical"
+      aria-valuemin={Math.round(SHADE_MIN * 100)}
+      aria-valuemax={Math.round(SHADE_MAX * 100)}
+      aria-valuenow={pct}
+      className={`group/shade absolute inset-x-0 top-0 z-20 touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60 ${
+        dragging ? "cursor-grabbing" : "cursor-grab"
+      }`}
+      style={{ height }}
+      onPointerDown={(e) => {
+        const glass = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+        drag.current = { startY: e.clientY, start: shade.get(), h: glass.height };
+        e.currentTarget.setPointerCapture(e.pointerId);
+        setDragging(true);
+        setTouched(true);
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (!d) return;
+        set(d.start + (e.clientY - d.startY) / d.h);
+      }}
+      onPointerUp={() => {
+        drag.current = null;
+        setDragging(false);
+      }}
+      onPointerCancel={() => {
+        drag.current = null;
+        setDragging(false);
+      }}
+      onDoubleClick={() => springTo(shade.get() > 0.5 ? SHADE_REST : SHADE_MAX)}
+      onKeyDown={(e) => {
+        const step = e.shiftKey ? 0.2 : 0.06;
+        if (e.key === "ArrowDown") springTo(shade.get() + step);
+        else if (e.key === "ArrowUp") springTo(shade.get() - step);
+        else if (e.key === "End") springTo(SHADE_MAX);
+        else if (e.key === "Home") springTo(SHADE_MIN);
+        else return;
+        e.preventDefault();
+        setTouched(true);
+      }}
+    >
+      {/* shadow the shade casts onto the glass */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-full h-6"
+        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.45), transparent)" }}
+      />
+      {/* shade body — moulded plastic with fine horizontal ribs */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, #3d70b5 0%, #5a89c8 20%, #7ba5d6 45%, #a2c1de 70%, #cadae7 100%)",
+            "linear-gradient(to bottom, #6f7378 0%, #82868b 55%, #8e9297 85%, #7a7e83 100%), " +
+            "repeating-linear-gradient(to bottom, transparent 0 6px, rgba(0,0,0,0.04) 6px 7px)",
+          backgroundBlendMode: "multiply",
+          boxShadow: "inset 0 -1px 0 rgba(255,255,255,0.18)",
         }}
       />
-
-      {/* Real cloud photograph — this is the star of the show.
-          Same URL as the outer full-bleed image → free browser cache hit. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={CLOUD_SRC.default}
-        srcSet={CLOUD_SRC.srcSet}
-        sizes="(max-width: 640px) 100vw, 640px"
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-        loading="eager"
-      />
-
-      {/* Sun bloom — warm high-right */}
+      {/* rounded lip along the bottom edge */}
       <div
-        aria-hidden
-        className="absolute top-[6%] right-[10%] h-28 w-28 rounded-full opacity-80"
+        className="absolute inset-x-0 bottom-0 h-[10px]"
         style={{
-          background:
-            "radial-gradient(circle, rgba(255,245,215,1) 0%, rgba(255,225,170,0.6) 30%, rgba(255,200,130,0.2) 60%, transparent 80%)",
-          filter: "blur(4px)",
+          background: "linear-gradient(to bottom, #9a9ea3 0%, #b4b8bc 45%, #6c7075 100%)",
+          boxShadow: "0 2px 3px rgba(0,0,0,0.45)",
         }}
       />
-
-      {/* Very slow subtle wisps for gentle motion — low opacity so photo dominates */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-20">
-        <div
-          className="clouds-b absolute -left-1/2 top-[25%] h-[35%] w-[200%]"
-          style={{
-            background:
-              "radial-gradient(45% 100% at 15% 50%, rgba(255,255,255,0.6), transparent 60%)," +
-              "radial-gradient(50% 100% at 55% 50%, rgba(255,255,255,0.7), transparent 60%)," +
-              "radial-gradient(40% 100% at 85% 50%, rgba(255,255,255,0.55), transparent 60%)",
-            filter: "blur(24px)",
-          }}
-        />
-      </div>
-
-      {/* Warm ambient — enhances the photo like sunset light */}
+      {/* finger grip */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-25 mix-blend-overlay"
+        className="absolute bottom-[3px] left-1/2 h-[4px] w-12 -translate-x-1/2 rounded-full transition-[width] duration-200 group-hover/shade:w-16"
         style={{
-          background:
-            "linear-gradient(to bottom, rgba(255,220,180,0.4) 0%, transparent 25%, transparent 70%, rgba(255,200,150,0.3) 100%)",
+          background: "linear-gradient(to bottom, #3c4045, #5d6166)",
+          boxShadow: "inset 0 1px 1px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.25)",
         }}
       />
-    </div>
+      {/* "drag me" hint on the shade itself — shows on hover until the visitor has played with it */}
+      {!touched && (
+        <span className="pointer-events-none absolute bottom-[16px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/15 bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white/85 opacity-0 transition-opacity duration-300 group-hover/shade:opacity-100">
+          {hint}
+        </span>
+      )}
+    </motion.div>
   );
 }
 
@@ -702,7 +769,9 @@ function RevealWord({
 }) {
   return (
     <span
-      className={`${className} ${italic ? "italic" : ""} block overflow-hidden`}
+      // No overflow clip: it cut the text-shadow off in a hard-edged box.
+      // Letters still rise in hidden — they start transparent and blurred.
+      className={`${className} ${italic ? "italic" : ""} block`}
     >
       {text.split("").map((char, i) => (
         <motion.span
