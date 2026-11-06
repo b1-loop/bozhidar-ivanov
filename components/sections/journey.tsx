@@ -38,6 +38,7 @@ export function Journey() {
         </div>
 
         <ProgressLine progress={scrollYProgress} total={total} />
+        <FlightRoute progress={scrollYProgress} chapters={c.journey} />
         <ChapterCounter progress={scrollYProgress} total={total} />
 
         <div className="absolute inset-0">
@@ -86,6 +87,115 @@ function ProgressLine({
         className="h-full bg-gradient-to-r from-white/60 via-white to-white/60"
       />
     </div>
+  );
+}
+
+// Vertical offset (px) of the dashed arc at x∈[0,1] — matches the SVG path
+// "M0 18 Q50 -10 100 18" drawn in a 40px-tall box, relative to its ends.
+const arcOffset = (x: number) => 2 * (18 * (1 - x) ** 2 - 20 * x * (1 - x) + 18 * x ** 2) - 36;
+
+// Each chapter is an "airport" on the flight map
+const AIRPORT: Record<string, string> = {
+  factory: "VCC",
+  founder: "HBL",
+  developer: "DEV",
+  now: "NXT",
+};
+
+/**
+ * Seat-back flight map: airports in chronological order left → right, and a
+ * plane that flies back in time (right → left) as the chapters scroll by.
+ */
+function FlightRoute({
+  progress,
+  chapters,
+}: {
+  progress: MotionValue<number>;
+  chapters: JourneyChapter[];
+}) {
+  const total = chapters.length;
+  // chronological: oldest chapter (last in the list) on the left
+  const stops = [...chapters].reverse();
+  // progress → position along the route (1 = NXT on the right, 0 = VCC on the left)
+  const pos = useTransform(progress, (v) => {
+    const local = Math.min(total - 1, Math.max(0, v * total - 0.5));
+    return 1 - local / (total - 1);
+  });
+  const left = useTransform(pos, (x) => `${x * 100}%`);
+  const y = useTransform(pos, arcOffset);
+  const active = useTransform(pos, (x) => Math.round(x * (total - 1)));
+
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute left-1/2 top-[88px] z-30 w-[min(560px,84vw)] -translate-x-1/2 md:top-auto md:bottom-[calc(env(safe-area-inset-bottom)+4.75rem)]"
+    >
+      <div className="relative h-10">
+        {/* dashed arc */}
+        <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-full w-full overflow-visible">
+          <path
+            d="M0 18 Q50 -10 100 18"
+            fill="none"
+            stroke="rgba(255,255,255,0.35)"
+            strokeWidth="1.2"
+            strokeDasharray="2 2.5"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+        {/* airports */}
+        {stops.map((ch, i) => {
+          const x = i / (total - 1);
+          const yOff = arcOffset(x);
+          return (
+            <Airport key={ch.id} x={x} yOff={yOff} index={i} active={active} code={AIRPORT[ch.id] ?? ch.id.slice(0, 3).toUpperCase()} year={ch.year} accent={ch.accent} />
+          );
+        })}
+        {/* the plane — nose pointing left (flying back in time) */}
+        <motion.div className="absolute top-[36px] -translate-x-1/2 -translate-y-1/2" style={{ left, y }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" className="-scale-x-100 drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]">
+            <path
+              fill="white"
+              d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"
+              transform="rotate(90 12 12)"
+            />
+          </svg>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+function Airport({
+  x,
+  yOff,
+  index,
+  active,
+  code,
+  year,
+  accent,
+}: {
+  x: number;
+  yOff: number;
+  index: number;
+  active: MotionValue<number>;
+  code: string;
+  year: string;
+  accent: string;
+}) {
+  const opacity = useTransform(active, (a) => (a === index ? 1 : 0.45));
+  const scale = useTransform(active, (a) => (a === index ? 1.15 : 1));
+  return (
+    <motion.div
+      className="absolute top-[36px] flex -translate-x-1/2 flex-col items-center"
+      style={{ left: `${x * 100}%`, marginTop: yOff, opacity }}
+    >
+      <motion.span
+        className="-mt-[5px] h-2.5 w-2.5 rounded-full border-2 border-white/80"
+        style={{ backgroundColor: accent, scale }}
+      />
+      <span className="mt-1.5 font-mono text-[10px] font-semibold tracking-[0.2em] text-white">{code}</span>
+      <span className="font-mono text-[8px] tracking-[0.2em] text-white/60">{year}</span>
+    </motion.div>
   );
 }
 

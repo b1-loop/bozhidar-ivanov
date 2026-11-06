@@ -19,8 +19,13 @@
   --font-display: var(--font-display);
 }
 
-* {
-  border-color: var(--border);
+/* Default border colour. Kept inside @layer base so Tailwind's border-colour
+   utilities (border-emerald-400/40, border-[#16130f]/40 …) can override it —
+   an unlayered rule here would beat every utility. */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 html {
@@ -182,6 +187,20 @@ body {
 .wing-nav { animation: wing-nav 3s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .night-twinkle, .wing-strobe, .wing-nav { animation: none; }
+}
+
+/* Turbulence — a short shake on the window and the flight instrument */
+@keyframes turbulence {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0); }
+  15% { transform: translate3d(-3px, 2px, 0) rotate(-0.4deg); }
+  30% { transform: translate3d(3px, -2px, 0) rotate(0.35deg); }
+  45% { transform: translate3d(-2px, -1px, 0) rotate(-0.25deg); }
+  60% { transform: translate3d(2px, 2px, 0) rotate(0.2deg); }
+  75% { transform: translate3d(-1px, 1px, 0) rotate(-0.1deg); }
+}
+.turbulence .flight-shake { animation: turbulence 0.9s ease-in-out; }
+@media (prefers-reduced-motion: reduce) {
+  .turbulence .flight-shake { animation: none; }
 }
 
 /* B1 bot — idle motion in CSS so it never costs main-thread JS */
