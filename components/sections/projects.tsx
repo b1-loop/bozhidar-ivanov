@@ -7,6 +7,7 @@ import { GithubIcon } from "@/components/icons";
 import { useContent } from "@/lib/i18n";
 import type { Project } from "@/lib/content";
 import { SectionBackdrop } from "@/components/section-backdrop";
+import { LazyVideo } from "@/components/lazy-video";
 
 // Colored gradient per project — used in the visual header of each card
 function accentFor(type: string): string {
@@ -201,7 +202,7 @@ function ProjectCard({
           {hasCaseStudy && (
             <Link
               href={`/projects/${project.slug}`}
-              className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs sm:px-3 sm:py-1 sm:text-[11px] font-medium transition-colors"
               style={{
                 borderColor: `${accent}55`,
                 color: accent,
@@ -218,7 +219,7 @@ function ProjectCard({
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 text-[11px] text-muted transition-colors hover:border-white/30 hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3.5 py-2 text-xs sm:px-3 sm:py-1 sm:text-[11px] text-muted transition-colors hover:border-white/30 hover:text-foreground"
               aria-label={`GitHub for ${project.name}`}
             >
               <GithubIcon className="h-3 w-3" />
@@ -230,7 +231,7 @@ function ProjectCard({
               href={project.demo}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 text-[11px] text-muted transition-colors hover:border-white/30 hover:text-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3.5 py-2 text-xs sm:px-3 sm:py-1 sm:text-[11px] text-muted transition-colors hover:border-white/30 hover:text-foreground"
               aria-label={`Live site for ${project.name}`}
             >
               <ExternalLink className="h-3 w-3" />
@@ -241,15 +242,12 @@ function ProjectCard({
         </div>
 
         {project.video && (
-          // preload="none" so the demo only downloads when played
-          <video
+          // Poster + src attach only near the viewport; the video itself downloads on play
+          <LazyVideo
             src={project.video}
             poster={project.poster}
-            controls
-            playsInline
-            preload="none"
             className={`mt-6 ${project.wideVideo ? "aspect-video" : "aspect-square"} w-full rounded-xl border border-white/10 bg-black object-cover lg:mt-0`}
-            aria-label={`${project.name} demo video`}
+            label={`${project.name} demo video`}
           />
         )}
       </div>

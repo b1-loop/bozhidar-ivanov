@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import {
   animate,
   motion,
@@ -17,12 +18,16 @@ import { PsuPanel } from "@/components/psu-panel";
 // Aurora borealis — photo by Luke Stackpoole on Unsplash (Unsplash License).
 // A landscape crop fills the background, the full portrait frame fills the window.
 const AURORA_WIDE = {
-  src: "/hero/aurora-wide-2400.jpg",
-  srcSet: "/hero/aurora-wide-1200.jpg 1200w, /hero/aurora-wide-2400.jpg 2400w",
+  src: "/hero/aurora-wide-1800.jpg",
+  srcSet:
+    "/hero/aurora-wide-1200.jpg 1200w, /hero/aurora-wide-1800.jpg 1800w, /hero/aurora-wide-2400.jpg 2400w",
+  sizes: "100vw",
 };
 const AURORA_WINDOW = {
-  src: "/hero/aurora-window-1200.jpg",
-  srcSet: "/hero/aurora-window-700.jpg 700w, /hero/aurora-window-1200.jpg 1200w",
+  src: "/hero/aurora-window-900.jpg",
+  srcSet:
+    "/hero/aurora-window-700.jpg 700w, /hero/aurora-window-900.jpg 900w, /hero/aurora-window-1200.jpg 1200w",
+  sizes: "(max-width: 640px) 100vw, 640px",
 };
 
 type MarqueeItem = { label: string; accent?: boolean; mono?: boolean };
@@ -43,6 +48,9 @@ const marqueeItems: MarqueeItem[] = [
 
 export function Hero() {
   const c = useContent();
+  // Start fetching the above-the-fold aurora before any JS runs (<link rel=preload> in <head>)
+  preload(AURORA_WIDE.src, { as: "image", imageSrcSet: AURORA_WIDE.srcSet, imageSizes: AURORA_WIDE.sizes, fetchPriority: "high" });
+  preload(AURORA_WINDOW.src, { as: "image", imageSrcSet: AURORA_WINDOW.srcSet, imageSizes: AURORA_WINDOW.sizes, fetchPriority: "high" });
   const ref = useRef<HTMLElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const [marqueePaused, setMarqueePaused] = useState(false);
@@ -120,7 +128,7 @@ export function Hero() {
       <img
         src={AURORA_WIDE.src}
         srcSet={AURORA_WIDE.srcSet}
-        sizes="100vw"
+        sizes={AURORA_WIDE.sizes}
         alt=""
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
@@ -193,8 +201,10 @@ export function Hero() {
         className="relative z-10 mx-auto flex w-full flex-1 items-center justify-center will-change-transform px-3 pt-[150px] pb-6 sm:px-4 sm:pt-[158px] sm:pb-8 md:px-10"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
+          // Scale only: an opacity-0 start would hide the window image (the LCP
+          // element) until JS hydrates — and the intro covers this anyway.
+          initial={{ scale: 0.94 }}
+          animate={{ scale: 1 }}
           transition={{ duration: 1.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="relative w-full max-w-xl"
           style={{ height: "min(78svh, 780px)" }}
@@ -436,10 +446,11 @@ function AirplaneWindow({
           <img
             src={AURORA_WINDOW.src}
             srcSet={AURORA_WINDOW.srcSet}
-            sizes="(max-width: 640px) 100vw, 640px"
+            sizes={AURORA_WINDOW.sizes}
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
             loading="eager"
+            fetchPriority="high"
           />
           {/* the photo already has stars — just add a few that twinkle */}
           <div className="night-twinkle absolute inset-0" style={{ backgroundImage: TWINKLE_STARS }} />

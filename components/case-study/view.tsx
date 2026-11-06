@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
 import { Nav } from "@/components/nav";
+import { LazyVideo } from "@/components/lazy-video";
 import { useContent } from "@/lib/i18n";
 import type { CaseStudy, Project } from "@/lib/content";
 
@@ -190,14 +191,12 @@ function DemoVideo({ project }: { project: Project }) {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]"
         >
-          {/* preload="none": the demo only downloads when played */}
-          <video
+          {/* poster attaches near the viewport; the demo downloads on play */}
+          <LazyVideo
             src={project.video}
             poster={project.poster}
-            controls
-            playsInline
-            preload="none"
             className="aspect-video w-full bg-black object-contain"
+            label={`${project.name} demo video`}
           />
         </motion.div>
       </div>
