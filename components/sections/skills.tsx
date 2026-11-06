@@ -1,133 +1,152 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useContent } from "@/lib/i18n";
-import type { SkillGroup } from "@/lib/content";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useContent, useLocale } from "@/lib/i18n";
 import { SectionBackdrop } from "@/components/section-backdrop";
 
-function CategoryIcon({ category, className }: { category: string; className?: string }) {
-  const key = category.toLowerCase();
-  const stroke = "currentColor";
-  const props = {
-    className,
-    width: 20,
-    height: 20,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke,
-    strokeWidth: 1.5,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-    "aria-hidden": true,
-  };
+const COCKPIT_COPY = {
+  en: { avionics: "BI-2026 Avionics", mfd: "MFD", checklist: "Checklist", tools: "items", choose: "Skill systems", complete: "Checklist complete", learning: "In prog", page: "Page" },
+  sv: { avionics: "BI-2026 Avionics", mfd: "MFD", checklist: "Checklista", tools: "punkter", choose: "Kompetensområden", complete: "Checklista klar", learning: "Pågår", page: "Sida" },
+} as const;
 
-  if (key.startsWith("back")) {
-    return (
-      <svg {...props}>
-        <rect x="3" y="4" width="18" height="6" rx="1" />
-        <rect x="3" y="14" width="18" height="6" rx="1" />
-        <circle cx="7" cy="7" r="0.5" fill={stroke} />
-        <circle cx="7" cy="17" r="0.5" fill={stroke} />
-      </svg>
-    );
-  }
-  if (key.startsWith("ai")) {
-    return (
-      <svg {...props}>
-        <rect x="5" y="8" width="14" height="11" rx="3" />
-        <path d="M12 8V5" />
-        <circle cx="12" cy="4" r="1" />
-        <circle cx="9.5" cy="13" r="1" fill={stroke} />
-        <circle cx="14.5" cy="13" r="1" fill={stroke} />
-        <path d="M9.5 16.5h5M3 12v3M21 12v3" />
-      </svg>
-    );
-  }
-  if (key.startsWith("front")) {
-    return (
-      <svg {...props}>
-        <rect x="3" y="4" width="18" height="14" rx="1.5" />
-        <path d="M3 8h18" />
-        <circle cx="6" cy="6" r="0.5" fill={stroke} />
-      </svg>
-    );
-  }
-  if (key.startsWith("data")) {
-    return (
-      <svg {...props}>
-        <ellipse cx="12" cy="5" rx="8" ry="3" />
-        <path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5" />
-        <path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
-      </svg>
-    );
-  }
-  if (key.startsWith("tool") || key.startsWith("dev")) {
-    return (
-      <svg {...props}>
-        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.3-2.3 2.6-2.6z" />
-      </svg>
-    );
-  }
-  if (key.startsWith("test")) {
-    return (
-      <svg {...props}>
-        <path d="M9 3v6l-5 9a2 2 0 0 0 1.7 3h12.6A2 2 0 0 0 20 18l-5-9V3" />
-        <path d="M8 3h8" />
-        <path d="M7 15h10" />
-      </svg>
-    );
-  }
-  if (key.startsWith("sec") || key.startsWith("säk")) {
-    return (
-      <svg {...props}>
-        <path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5l-8-3z" />
-        <path d="m9 12 2 2 4-4" />
-      </svg>
-    );
-  }
-  if (key.startsWith("lead") || key.startsWith("ledar")) {
-    return (
-      <svg {...props}>
-        <circle cx="9" cy="8" r="3" />
-        <circle cx="17" cy="10" r="2" />
-        <path d="M3 20c0-3 3-5 6-5s6 2 6 5" />
-        <path d="M15 20c0-2 2-3.5 4-3.5s2 1 2 3" />
-      </svg>
-    );
-  }
+/* A physical bezel key: rubber-capped, backlit when its system is selected */
+function BezelKey({
+  active,
+  onClick,
+  label,
+  id,
+  onKeyDown,
+  refCb,
+  wide = false,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  id: string;
+  onKeyDown: (e: React.KeyboardEvent) => void;
+  refCb: (el: HTMLButtonElement | null) => void;
+  wide?: boolean;
+}) {
   return (
-    <svg {...props}>
-      <circle cx="12" cy="12" r="9" />
-    </svg>
+    <button
+      ref={refCb}
+      type="button"
+      role="tab"
+      id={id}
+      aria-selected={active}
+      aria-controls="skill-panel"
+      aria-label={label}
+      tabIndex={active ? 0 : -1}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      className={`relative shrink-0 rounded-[5px] border border-black/70 bg-[linear-gradient(to_bottom,#3b3f45,#26292e)] shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_2px_0_#0b0c0e,0_3px_6px_rgba(0,0,0,0.6)] outline-none transition-all active:translate-y-[2px] active:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_0_#0b0c0e] focus-visible:ring-2 focus-visible:ring-cyan-300/50 ${
+        wide ? "h-11 w-full px-1.5" : "h-9 w-12"
+      }`}
+    >
+      {/* backlit bar */}
+      <span
+        aria-hidden
+        className={`absolute left-1/2 top-1.5 h-[3px] w-6 -translate-x-1/2 rounded-full transition-all ${
+          active ? "bg-cyan-300 shadow-[0_0_8px_2px_rgba(103,232,249,0.7)]" : "bg-black/50"
+        }`}
+      />
+      {wide && (
+        <span className={`relative mt-1.5 block truncate font-mono text-[9px] uppercase tracking-[0.06em] ${active ? "text-cyan-200" : "text-white/65"}`}>
+          {label}
+        </span>
+      )}
+    </button>
   );
 }
 
-// Bento sizing: 0..6 → span classes
-const layout = [
-  "sm:col-span-2 md:col-span-6 lg:col-span-4 lg:row-span-2", // Backend (feature)
-  "md:col-span-3 lg:col-span-4",                              // Frontend
-  "md:col-span-3 lg:col-span-4",                              // Database
-  "md:col-span-3 lg:col-span-4",                              // Tools & DevOps
-  "md:col-span-3 lg:col-span-4",                              // Testing
-  "md:col-span-3 lg:col-span-4",                              // Security
-  "sm:col-span-2 md:col-span-6 lg:col-span-12",               // Leadership (wide bottom)
-];
+function Screw({ className }: { className: string }) {
+  return (
+    <span
+      aria-hidden
+      className={`absolute h-3 w-3 rounded-full bg-[radial-gradient(circle_at_35%_30%,#8b9097,#3d4146_70%)] shadow-[inset_0_1px_1px_rgba(0,0,0,0.6),0_1px_0_rgba(255,255,255,0.08)] ${className}`}
+    >
+      <span className="absolute left-1/2 top-1/2 h-[1.5px] w-2 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-black/60" />
+    </span>
+  );
+}
+
+function Knob({ label }: { label: string }) {
+  return (
+    <span className="flex flex-col items-center gap-1.5" aria-hidden>
+      <span className="relative h-9 w-9 rounded-full bg-[conic-gradient(from_0deg,#4a4e54,#2a2d31,#4a4e54,#2a2d31,#4a4e54)] shadow-[0_3px_6px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]">
+        <span className="absolute inset-[5px] rounded-full bg-[radial-gradient(circle_at_40%_35%,#3a3e44,#1d1f22)]" />
+        <span className="absolute left-1/2 top-[6px] h-2.5 w-[2px] -translate-x-1/2 rounded bg-white/70" />
+      </span>
+      <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-white/40">{label}</span>
+    </span>
+  );
+}
 
 export function Skills() {
   const c = useContent();
+  const { locale } = useLocale();
+  const t = COCKPIT_COPY[locale];
+  const reduce = useReducedMotion();
+  const groups = c.skills;
+  const [selected, setSelected] = useState(0);
+  const deskRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const mobRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const group = groups[Math.min(selected, groups.length - 1)];
+  const half = Math.ceil(groups.length / 2);
+  const leftIdx = groups.map((_, i) => i).slice(0, half);
+  const rightIdx = groups.map((_, i) => i).slice(half);
+
+  const move = (to: number) => {
+    const n = (to + groups.length) % groups.length;
+    setSelected(n);
+    const el = [deskRefs.current[n], mobRefs.current[n]].find((b) => b && b.offsetParent !== null);
+    el?.focus({ preventScroll: true });
+  };
+  const keyNav = (i: number) => (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      e.preventDefault();
+      move(i + 1);
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      move(i - 1);
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      move(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      move(groups.length - 1);
+    }
+  };
+
+  // Screen-edge label next to a bezel key (line-select style); inverted when selected
+  const EdgeLabel = ({ i, side }: { i: number; side: "left" | "right" }) => {
+    const active = i === selected;
+    return (
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-hidden
+        onClick={() => setSelected(i)}
+        className={`flex h-9 items-center gap-1 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors ${
+          side === "left" ? "justify-start pl-1" : "justify-end pr-1"
+        } ${active ? "bg-cyan-300 text-black" : "text-cyan-200/80 hover:text-cyan-100"}`}
+      >
+        {side === "left" && <span className={active ? "" : "text-cyan-300/60"}>◂</span>}
+        <span className="truncate">{groups[i].category}</span>
+        {side === "right" && <span className={active ? "" : "text-cyan-300/60"}>▸</span>}
+      </button>
+    );
+  };
+
   return (
-    <section
-      id="skills"
-      className="relative overflow-hidden py-32"
-    >
+    <section id="skills" className="relative overflow-hidden py-24 md:py-32">
       <SectionBackdrop variant="skills" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
-        <div className="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">
+        <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-muted">
-              {c.ui.skills.section}
-            </p>
+            <p className="mb-4 font-mono text-xs uppercase tracking-[0.3em] text-muted">{c.ui.skills.section}</p>
             <h2 className="font-display text-5xl leading-[1] tracking-tighter md:text-7xl lg:text-8xl">
               {c.ui.skills.title1}
               <br />
@@ -139,108 +158,181 @@ export function Skills() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-12">
-          {c.skills.map((group, i) => (
-            <SkillCard
-              key={group.category}
-              group={group}
-              index={i}
-              featured={i === 0 || i === 6}
-              className={layout[i] ?? "md:col-span-3 lg:col-span-4"}
-            />
-          ))}
-        </div>
+        {/* ================= Instrument panel ================= */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="relative rounded-[22px] bg-[linear-gradient(170deg,#34383d_0%,#25282c_45%,#1b1d20_100%)] p-3 shadow-[0_50px_100px_-40px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.1),inset_0_-2px_0_rgba(0,0,0,0.5)] sm:p-5"
+        >
+          <div className="noise rounded-[22px] opacity-30" />
+          <Screw className="left-3 top-3" />
+          <Screw className="right-3 top-3" />
+          <Screw className="bottom-3 left-3" />
+          <Screw className="bottom-3 right-3" />
 
-        <div className="mt-14 rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:flex md:items-center md:gap-8">
-          <div className="mb-4 md:mb-0">
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted">
-              {c.ui.skills.learning}
-            </p>
-            <div
-              className="mt-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-emerald-400"
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              </span>
-              In progress
-            </div>
+          {/* panel label */}
+          <div className="relative mb-3 flex items-center justify-between px-5 sm:px-6">
+            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-white/45">{t.avionics}</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-white/45">{t.mfd} · 1</span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {c.learning.map((l) => (
-              <span
-                key={l}
-                className="rounded-full border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] px-4 py-1.5 text-sm text-foreground/90"
-              >
-                {l}
-              </span>
+
+          {/* keys row on phones / tablets */}
+          <div
+            role="tablist"
+            aria-label={t.choose}
+            className="relative mb-3 grid grid-cols-3 gap-2 px-1 pb-1 pt-0.5 sm:grid-cols-5 lg:hidden"
+          >
+            {groups.map((g, i) => (
+              <BezelKey
+                key={g.category}
+                wide
+                id={`skill-tab-m-${i}`}
+                active={i === selected}
+                label={g.category}
+                onClick={() => setSelected(i)}
+                onKeyDown={keyNav(i)}
+                refCb={(el) => {
+                  mobRefs.current[i] = el;
+                }}
+              />
             ))}
           </div>
-        </div>
+
+          {/* MFD: bezel keys | screen | bezel keys */}
+          <div className="relative grid grid-cols-1 items-stretch gap-3 lg:grid-cols-[56px_1fr_56px]">
+            {/* bezel column (keys are pinned to their screen labels below) */}
+            <div aria-hidden className="hidden lg:block" />
+
+            {/* the glass */}
+            <div className="rounded-xl bg-[#0a0b0d] p-2 shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_0_0_1px_rgba(0,0,0,0.8),0_1px_0_rgba(255,255,255,0.06)] sm:p-2.5">
+              <div
+                id="skill-panel"
+                role="tabpanel"
+                aria-labelledby={`skill-tab-${selected}`}
+                className="relative min-h-[380px] rounded-md bg-[radial-gradient(120%_90%_at_50%_0%,#0d1418_0%,#05080a_60%,#030405_100%)] font-mono"
+              >
+                {/* glass reflection + scanlines */}
+                <div aria-hidden className="pointer-events-none absolute inset-0 z-20 bg-[linear-gradient(125deg,rgba(255,255,255,0.06)_0%,transparent_28%)]" />
+                <div aria-hidden className="pointer-events-none absolute inset-0 z-20 opacity-[0.07] [background:repeating-linear-gradient(to_bottom,#fff_0_1px,transparent_1px_3px)]" />
+
+                {/* screen status bar */}
+                <div className="flex items-center justify-between border-b border-cyan-400/20 px-3 py-1.5 text-[10px] uppercase tracking-[0.15em]">
+                  <span className="text-emerald-300">{t.checklist}</span>
+                  <span className="text-white/50">
+                    {t.page} <span className="text-white">{String(selected + 1).padStart(2, "0")}</span>/{String(groups.length).padStart(2, "0")}
+                  </span>
+                  <span className="hidden text-fuchsia-300 sm:inline">FL350 · GS 480</span>
+                </div>
+
+                <div className="grid lg:grid-cols-[150px_1fr_150px]">
+                  {/* left line-select labels */}
+                  <div role="tablist" aria-label={t.choose} aria-orientation="vertical" className="hidden flex-col justify-around border-r border-cyan-400/10 py-10 lg:flex">
+                    {leftIdx.map((i) => (
+                      <div key={i} className="relative">
+                        <EdgeLabel i={i} side="left" />
+                        {/* the physical key, level with its label: 10px glass + 12px gap + 4px inset */}
+                        <span className="absolute top-0 -left-[74px]">
+                          <BezelKey
+                            id={`skill-tab-${i}`}
+                            active={i === selected}
+                            label={groups[i].category}
+                            onClick={() => setSelected(i)}
+                            onKeyDown={keyNav(i)}
+                            refCb={(el) => {
+                              deskRefs.current[i] = el;
+                            }}
+                          />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* checklist */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={group.category}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="px-4 py-4 sm:px-6"
+                    >
+                      <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-white/10 pb-2">
+                        <h3 className="text-base uppercase tracking-[0.18em] text-white sm:text-lg">{group.category}</h3>
+                        <span className="text-[10px] uppercase tracking-[0.15em] text-cyan-300/80">
+                          {group.items.length} {t.tools}
+                        </span>
+                      </div>
+                      <ul className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
+                        {group.items.map((item, i) => (
+                          <motion.li
+                            key={item}
+                            initial={reduce ? false : { opacity: 0, x: -6 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.18, delay: reduce ? 0 : Math.min(i * 0.03, 0.4) }}
+                            className="flex items-baseline gap-2 text-[11px] uppercase tracking-[0.06em] text-white/90 sm:text-xs"
+                          >
+                            <span className="min-w-0 break-words">{item}</span>
+                            <span aria-hidden className="mb-[3px] min-w-4 flex-1 border-b border-dotted border-white/20" />
+                            <span className="text-emerald-300">✓</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                      <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-emerald-300/80">■ {t.complete}</p>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  {/* right line-select labels */}
+                  <div role="tablist" aria-label={t.choose} aria-orientation="vertical" className="hidden flex-col justify-around border-l border-cyan-400/10 py-10 lg:flex">
+                    {rightIdx.map((i) => (
+                      <div key={i} className="relative">
+                        <EdgeLabel i={i} side="right" />
+                        {/* the physical key, level with its label: 10px glass + 12px gap + 4px inset */}
+                        <span className="absolute top-0 -right-[74px]">
+                          <BezelKey
+                            id={`skill-tab-${i}`}
+                            active={i === selected}
+                            label={groups[i].category}
+                            onClick={() => setSelected(i)}
+                            onKeyDown={keyNav(i)}
+                            refCb={(el) => {
+                              deskRefs.current[i] = el;
+                            }}
+                          />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div aria-hidden className="hidden lg:block" />
+          </div>
+
+          {/* annunciators (currently learning) + knobs */}
+          <div className="relative mt-4 flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-1 font-mono text-[9px] uppercase tracking-[0.25em] text-white/45">{c.ui.skills.learning}</span>
+              {c.learning.map((l) => (
+                <span
+                  key={l}
+                  className="rounded-[3px] border border-amber-900/80 bg-[linear-gradient(to_bottom,#3a2a0a,#241a06)] px-2.5 py-1 text-center font-mono text-[9px] uppercase leading-tight tracking-[0.12em] text-amber-300 shadow-[inset_0_0_8px_rgba(251,191,36,0.25),0_0_10px_rgba(251,191,36,0.12)]"
+                >
+                  {l}
+                  <span className="block text-[7px] text-amber-400/70">{t.learning}</span>
+                </span>
+              ))}
+            </div>
+            <div className="hidden items-end gap-5 sm:flex">
+              <Knob label="Brt" />
+              <Knob label="Range" />
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
-  );
-}
-
-function SkillCard({
-  group,
-  index,
-  featured,
-  className,
-}: {
-  group: SkillGroup;
-  index: number;
-  featured?: boolean;
-  className?: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }}
-      className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6 transition-colors hover:border-white/25 md:p-8 ${className ?? ""}`}
-    >
-      {/* Hover glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-1 opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
-        style={{
-          background:
-            "radial-gradient(60% 60% at 30% 20%, rgba(125,211,252,0.4) 0%, transparent 70%)",
-        }}
-      />
-
-      <div className="relative flex h-full flex-col justify-between">
-        <div>
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-foreground/80 transition-colors group-hover:border-white/25 group-hover:text-foreground">
-                <CategoryIcon category={group.category} />
-              </span>
-              <h3
-                className={`font-display tracking-tight text-foreground ${featured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"}`}
-              >
-                {group.category}
-              </h3>
-            </div>
-            <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          </div>
-
-          <ul className="flex flex-wrap gap-2">
-            {group.items.map((item) => (
-              <li
-                key={item}
-                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-muted transition-colors group-hover:border-white/25 group-hover:text-foreground/90"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </motion.div>
   );
 }

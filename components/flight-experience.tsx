@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Bell, Plane, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
+import { INTRO_DONE_EVENT } from "@/components/boot-intro";
 
 /**
  * The whole page as one flight:
@@ -39,7 +40,6 @@ const COPY = {
 } as const;
 
 type Kind = "captain" | "turbulence" | "landed";
-const CAPTAIN_KEY = "bi-captain";
 const TURBULENCE_SPEED = 12000; // px/s — well above a brisk scroll (~7000 with Lenis)
 const TURBULENCE_COOLDOWN = 25_000;
 
@@ -58,7 +58,12 @@ export function FlightExperience() {
   // after touchdown the instrument steps aside so it doesn't cover the contact buttons
   const [parked, setParked] = useState(false);
 
-  const landingTop = useRef(1);
+  // Unknown until measured — Infinity keeps a not-yet-measured page at "cruise"
+  // instead of reading every scroll position as "landed"
+  const landingTop = useRef(Number.POSITIVE_INFINITY);
+  // The flight starts once the boot intro has revealed the page (or right away if it was skipped)
+  const ready = useRef(false);
+  const announcedCaptain = useRef(false);
   const lastScroll = useRef({ y: 0, t: 0 });
   const lastTurbulence = useRef(-Infinity);
   // only the visitor's own wheel/touch scrolling counts — not nav-link or button jumps
@@ -71,6 +76,20 @@ export function FlightExperience() {
     setNotice(kind);
     window.clearTimeout(hideTimer.current);
     hideTimer.current = window.setTimeout(() => setNotice((cur) => (cur === kind ? null : cur)), ms);
+  }, []);
+
+  useEffect(() => {
+    const start = () => {
+      ready.current = true;
+    };
+    const skipped = document.documentElement.dataset.intro === "skip" || !document.querySelector(".boot-intro");
+    let t: number | undefined;
+    if (skipped) t = window.setTimeout(start, 300);
+    window.addEventListener(INTRO_DONE_EVENT, start);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener(INTRO_DONE_EVENT, start);
+    };
   }, []);
 
   useEffect(() => {
@@ -102,6 +121,9 @@ export function FlightExperience() {
   }, []);
 
   useMotionValueEvent(scrollY, "change", (y) => {
+    // Ignore the browser's scroll restoration / the intro's jump to the top
+    if (!ready.current) return;
+
     // --- flight instrument ---
     const p = Math.min(1, Math.max(0, y / landingTop.current));
     const alt = Math.round((10700 * Math.pow(1 - p, 1.15)) / 10) * 10;
@@ -126,14 +148,10 @@ export function FlightExperience() {
       parkTimer.current = undefined;
     }
 
-    // --- captain's welcome: first real scroll, once per session ---
-    if (y > 80) {
-      try {
-        if (!sessionStorage.getItem(CAPTAIN_KEY)) {
-          sessionStorage.setItem(CAPTAIN_KEY, "1");
-          announce("captain", 9000);
-        }
-      } catch {}
+    // --- captain's welcome: on the first real scroll of every visit (like the intro) ---
+    if (y > 80 && !announcedCaptain.current && !isLanded) {
+      announcedCaptain.current = true;
+      announce("captain", 9000);
     }
 
     // --- turbulence on very fast scrolling ---
