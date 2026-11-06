@@ -227,14 +227,14 @@ export const content: Record<Locale, Content> = {
   en: {
     personal: {
       ...shared,
-      role: "Fullstack Developer",
+      role: "Fullstack .NET Developer · AI-driven platforms",
       tagline: "Built by discipline. Shaped by code.",
       location: "Gothenburg, Sweden",
       coordsCity: "Gothenburg, SE",
       bio: "A disciplined software engineer combining leadership from industrial environments with modern .NET development. I built my path from Volvo Cars and running a premium auto detailing business to specializing in C# and .NET backend with Clean Architecture.",
       availableLabel: "Available",
       searchLabel: "Looking for",
-      searchValue: ".NET / Fullstack roles",
+      searchValue: ".NET / Fullstack / AI roles",
       languages: [
         { name: "Bulgarian", level: "Native" },
         { name: "Swedish", level: "Fluent" },
@@ -246,7 +246,7 @@ export const content: Record<Locale, Content> = {
         id: "now",
         year: "Now",
         title: "Next Chapter",
-        subtitle: "Fullstack Developer — Open for new roles",
+        subtitle: "Fullstack .NET Developer — Open for new roles",
         description:
           "Today I lead projects at InFiNet Code and build fullstack solutions at Devotion Ventures. Next step: a team where I can contribute from day one.",
         accent: "#a78bfa",
@@ -299,6 +299,17 @@ export const content: Record<Locale, Content> = {
       {
         category: "Frontend",
         items: ["React", "Blazor", "Tailwind CSS", "HTML / CSS", "MudBlazor"],
+      },
+      {
+        category: "AI & Agents",
+        items: [
+          "LLM Agents & Tool Calling",
+          "Local LLMs (Ollama)",
+          "OpenAI API",
+          "Speech (Whisper / wake word)",
+          "Prompt Engineering",
+          "AI-assisted Development",
+        ],
       },
       {
         category: "Database",
@@ -369,6 +380,84 @@ export const content: Record<Locale, Content> = {
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
         poster: "/projects/jarvis-desktop-poster.png",
+        slug: "jarvis-desktop",
+        caseStudy: {
+          tagline: "A voice-controlled AI agent for Windows: Python is the conductor, C++ is the muscle.",
+          overview:
+            "Say \"Hey Jarvis\", ask for something, and Jarvis transcribes you, lets an LLM agent pick from 63 tool plugins and answers out loud, sentence by sentence, while you can still talk over it. It runs on a free local model through Ollama by default, can switch to Claude, and has a fully offline mode. Everything with a real-time budget lives in C++20; everything that has to be flexible lives in Python.",
+          year: "2026",
+          role: "Design & development",
+          accent: "#fbbf24",
+          sections: [
+            {
+              heading: "The challenge",
+              body: "A voice assistant only feels intelligent if it feels instant. Audio can't wait for a garbage collector or the Python GIL, you must be able to interrupt it mid-sentence, and a small local 7B model gets confused when it's handed 63 tools at once. The goal was an agent that runs on my own machine and still responds like a product.",
+            },
+            {
+              heading: "Architecture",
+              body: "The system is split by time budget. Anything real-time is C++20 exposed through pybind11; the agent, tools, memory and integrations are Python 3.12 on asyncio. No native thread ever takes the GIL. A state machine (IDLE → LISTENING → THINKING → SPEAKING) emits every transition on an event bus, which keeps the overlay, tray and dashboard in sync without the orchestrator knowing about them.",
+              bullets: [
+                "Microphone capture into a lock-free single-producer ring buffer",
+                "Silero VAD and openWakeWord on ONNX Runtime, with pre-roll",
+                "Native barge-in: playback stops on speech onset without a round trip through Python",
+                "whisper.cpp and llama.cpp wrappers, plus a Dear ImGui + D3D11 status overlay",
+              ],
+            },
+            {
+              heading: "The agent",
+              body: "The LLM runs an agent loop over 63 plugins: computer control, files, dev tools (git, tests, VS Code), notes and reminders, web search, email, calendar, Spotify and smart home. Small models stay on track because each turn only sees a short, relevant tool list.",
+              bullets: [
+                "Per-turn tool selection by keywords and a multilingual embedding model, so Swedish requests find English tool descriptions",
+                "Multi-step chaining with a tool-call budget, parallel calls and one spoken summary",
+                "Spoken confirmation before anything that changes the world",
+                "Grounding: the current time every turn, and live data is always fetched again instead of reusing stale tool answers",
+              ],
+            },
+            {
+              heading: "Memory & proactivity",
+              body: "Jarvis remembers between sessions: SQLite with full-text search for conversations, notes, reminders and facts, and ChromaDB for recall by meaning. It can also start the conversation itself, with triggers for meetings, reminders and low battery, plus YAML routines such as a weekday morning briefing.",
+            },
+            {
+              heading: "Measured, not guessed",
+              body: "Latency is measured end to end by a benchmark that replays synthesised prompts into the real C++ audio engine, through the real speech recognition, agent, memory and text-to-speech. Every design decision and trade-off is written down as an architecture decision record (ADR).",
+              bullets: [
+                "Swedish on the GPU with Piper: about 2.7 s median from end of speech to first audio",
+                "Barge-in: playback stopped about 450 ms after you start talking, by design",
+                "Honest degradation: no microphone, models or credentials means a clearly reported fallback, never a silent failure",
+              ],
+            },
+          ],
+          outcomes: [
+            "A working desktop app: wake word or hotkey, tray icon, dashboard and autostart.",
+            "Three runtime configurations: local Ollama (default), Claude, or fully offline.",
+            "63 tools behind a confirmation layer, with memory that survives restarts.",
+            "Real-time audio in C++ and a flexible agent in Python, cleanly separated by pybind11.",
+          ],
+          stack: [
+            { category: "Agent & AI", items: ["Ollama (qwen2.5:7b)", "Claude", "Tool calling", "Embeddings"] },
+            { category: "Speech", items: ["faster-whisper", "whisper.cpp", "Silero VAD", "openWakeWord", "Piper", "edge-tts"] },
+            { category: "Native (C++20)", items: ["pybind11", "ONNX Runtime", "llama.cpp", "miniaudio", "Dear ImGui", "D3D11"] },
+            { category: "Python & data", items: ["Python 3.12", "asyncio", "SQLite FTS5", "ChromaDB"] },
+          ],
+          labels: {
+            backToProjects: "Back to projects",
+            caseStudy: "Case Study",
+            overviewHeading: "Overview",
+            roleLabel: "Role",
+            yearLabel: "Year",
+            typeLabel: "Type",
+            statusLabel: "Status",
+            statusLive: "Live",
+            statusDev: "In development",
+            outcomesHeading: "Outcomes",
+            stackHeading: "Stack",
+            ctaHeading: "Want an AI agent like this?",
+            ctaBody: "I'm open for .NET, fullstack and AI roles. Let's talk about agents, tools and what you're building.",
+            ctaButton: "Get in touch",
+            liveButton: "Live site",
+            githubButton: "View on GitHub",
+          },
+        },
       },
       {
         name: "Zoki Städ i Väst",
@@ -492,7 +581,7 @@ export const content: Record<Locale, Content> = {
             outcomesHeading: "Outcomes",
             stackHeading: "Stack",
             ctaHeading: "Want to build something similar?",
-            ctaBody: "I'm open for .NET / Fullstack roles. Let's talk about what you're building.",
+            ctaBody: "I'm open for .NET, fullstack and AI roles. Let's talk about what you're building.",
             ctaButton: "Get in touch",
             liveButton: "Live site",
             githubButton: "View on GitHub",
@@ -710,7 +799,7 @@ export const content: Record<Locale, Content> = {
         focus: "Focus",
         focusValue: "C# / .NET · Fullstack",
         seeking: "Seeking",
-        seekingValue: ".NET / Fullstack roles",
+        seekingValue: ".NET / Fullstack / AI roles",
       },
       journey: {
         chapter: "Chapter",
@@ -749,7 +838,7 @@ export const content: Record<Locale, Content> = {
         title1: "Let's build",
         title2: "something.",
         description:
-          "Open for fullstack and .NET roles. Based in Gothenburg, ready to relocate for the right team. Reach out — I always reply.",
+          "Open for fullstack, .NET and AI roles. Based in Gothenburg, ready to relocate for the right team. Reach out — I always reply.",
         mailMe: "Email me",
         downloadCv: "Download CV",
         bookCall: "Book a 15-min call",
@@ -771,14 +860,14 @@ export const content: Record<Locale, Content> = {
   sv: {
     personal: {
       ...shared,
-      role: "Fullstack Developer",
+      role: "Fullstack .NET-utvecklare · AI-drivna plattformar",
       tagline: "Byggd av disciplin. Formad av kod.",
       location: "Göteborg, Sverige",
       coordsCity: "Göteborg, SE",
       bio: "En disciplinerad mjukvaruingenjör som kombinerar ledarskap från industriella miljöer med modern .NET-utveckling. Jag byggde min bana från Volvo Cars och ett eget premiumföretag inom bildetaljering till att specialisera mig på C# och .NET backend med Clean Architecture.",
       availableLabel: "Tillgänglig",
       searchLabel: "Söker",
-      searchValue: ".NET / Fullstack roller",
+      searchValue: ".NET / Fullstack / AI-roller",
       languages: [
         { name: "Bulgariska", level: "Modersmål" },
         { name: "Svenska", level: "Flytande" },
@@ -790,7 +879,7 @@ export const content: Record<Locale, Content> = {
         id: "now",
         year: "Nu",
         title: "Nästa kapitel",
-        subtitle: "Fullstack Developer — Öppen för nya roller",
+        subtitle: "Fullstack .NET-utvecklare — Öppen för nya roller",
         description:
           "Idag leder jag projekt på InFiNet Code och bygger fullstack-lösningar på Devotion Ventures. Nästa steg: ett team där jag kan bidra från dag ett.",
         accent: "#a78bfa",
@@ -843,6 +932,17 @@ export const content: Record<Locale, Content> = {
       {
         category: "Frontend",
         items: ["React", "Blazor", "Tailwind CSS", "HTML / CSS", "MudBlazor"],
+      },
+      {
+        category: "AI & agenter",
+        items: [
+          "LLM-agenter & tool calling",
+          "Lokala LLM:er (Ollama)",
+          "OpenAI API",
+          "Tal (Whisper / väckord)",
+          "Prompt Engineering",
+          "AI-assisterad utveckling",
+        ],
       },
       {
         category: "Databas",
@@ -913,6 +1013,84 @@ export const content: Record<Locale, Content> = {
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
         poster: "/projects/jarvis-desktop-poster.png",
+        slug: "jarvis-desktop",
+        caseStudy: {
+          tagline: "En röststyrd AI-agent för Windows: Python dirigerar, C++ gör grovjobbet.",
+          overview:
+            "Säg \"Hey Jarvis\", be om något, och Jarvis transkriberar dig, låter en LLM-agent välja bland 63 verktyg och svarar högt, mening för mening, medan du fortfarande kan prata i mun på den. Som standard körs en gratis lokal modell via Ollama, den kan byta till Claude och har ett helt offline-läge. Allt som har realtidskrav ligger i C++20, och allt som behöver vara flexibelt ligger i Python.",
+          year: "2026",
+          role: "Design & utveckling",
+          accent: "#fbbf24",
+          sections: [
+            {
+              heading: "Utmaningen",
+              body: "En röstassistent känns bara smart om den känns direkt. Ljud kan inte vänta på en skräpsamlare eller Pythons GIL, man måste kunna avbryta den mitt i en mening, och en liten lokal 7B-modell blir förvirrad när den får 63 verktyg på en gång. Målet var en agent som körs på min egen dator och ändå svarar som en färdig produkt.",
+            },
+            {
+              heading: "Arkitektur",
+              body: "Systemet är uppdelat efter tidskrav. Allt i realtid är C++20 via pybind11, medan agenten, verktygen, minnet och integrationerna är Python 3.12 med asyncio. Ingen native-tråd tar någonsin GIL:en. En tillståndsmaskin (IDLE → LISTENING → THINKING → SPEAKING) skickar varje övergång på en eventbuss, så overlay, tray och dashboard hålls synkade utan att orkestreraren känner till dem.",
+              bullets: [
+                "Mikrofoninspelning till en låsfri ringbuffert",
+                "Silero VAD och openWakeWord på ONNX Runtime, med pre-roll",
+                "Native barge-in: uppspelningen stoppas när du börjar prata, utan en tur via Python",
+                "Wrappers för whisper.cpp och llama.cpp, plus ett status-overlay i Dear ImGui + D3D11",
+              ],
+            },
+            {
+              heading: "Agenten",
+              body: "LLM:en kör en agentloop över 63 plugins: datorstyrning, filer, utvecklarverktyg (git, tester, VS Code), anteckningar och påminnelser, webbsök, mejl, kalender, Spotify och smarta hem. Små modeller håller kursen eftersom varje tur bara ser en kort lista med relevanta verktyg.",
+              bullets: [
+                "Verktygsval per tur med nyckelord och en flerspråkig embedding-modell, så svenska frågor hittar engelska verktygsbeskrivningar",
+                "Flerstegskedjor med en budget för verktygsanrop, parallella anrop och en enda talad sammanfattning",
+                "Muntlig bekräftelse innan något som förändrar världen",
+                "Grounding: aktuell tid varje tur, och live-data hämtas alltid på nytt i stället för gamla verktygssvar",
+              ],
+            },
+            {
+              heading: "Minne & proaktivitet",
+              body: "Jarvis minns mellan sessioner: SQLite med fulltextsök för konversationer, anteckningar, påminnelser och fakta, och ChromaDB för att minnas utifrån betydelse. Den kan också ta initiativet själv, med triggers för möten, påminnelser och låg batterinivå, plus YAML-rutiner som en morgonbriefing på vardagar.",
+            },
+            {
+              heading: "Mätt, inte gissat",
+              body: "Latensen mäts från början till slut med ett benchmark som spelar upp syntetiserade frågor i den riktiga C++-ljudmotorn, genom riktig taligenkänning, agent, minne och talsyntes. Varje designbeslut och avvägning är dokumenterat som ett arkitekturbeslut (ADR).",
+              bullets: [
+                "Svenska på GPU:n med Piper: cirka 2,7 s i median från att du slutar prata till första ljudet",
+                "Barge-in: uppspelningen stoppas cirka 450 ms efter att du börjar prata, med avsikt",
+                "Ärlig nedgradering: saknas mikrofon, modeller eller inloggningar rapporteras det tydligt, aldrig ett tyst fel",
+              ],
+            },
+          ],
+          outcomes: [
+            "En fungerande skrivbordsapp: väckord eller kortkommando, tray-ikon, dashboard och autostart.",
+            "Tre körlägen: lokal Ollama (standard), Claude eller helt offline.",
+            "63 verktyg bakom ett bekräftelselager, med ett minne som överlever omstarter.",
+            "Realtidsljud i C++ och en flexibel agent i Python, tydligt separerade med pybind11.",
+          ],
+          stack: [
+            { category: "Agent & AI", items: ["Ollama (qwen2.5:7b)", "Claude", "Tool calling", "Embeddings"] },
+            { category: "Tal", items: ["faster-whisper", "whisper.cpp", "Silero VAD", "openWakeWord", "Piper", "edge-tts"] },
+            { category: "Native (C++20)", items: ["pybind11", "ONNX Runtime", "llama.cpp", "miniaudio", "Dear ImGui", "D3D11"] },
+            { category: "Python & data", items: ["Python 3.12", "asyncio", "SQLite FTS5", "ChromaDB"] },
+          ],
+          labels: {
+            backToProjects: "Tillbaka till projekt",
+            caseStudy: "Case Study",
+            overviewHeading: "Översikt",
+            roleLabel: "Roll",
+            yearLabel: "År",
+            typeLabel: "Typ",
+            statusLabel: "Status",
+            statusLive: "Live",
+            statusDev: "Under utveckling",
+            outcomesHeading: "Resultat",
+            stackHeading: "Stack",
+            ctaHeading: "Vill du ha en AI-agent som den här?",
+            ctaBody: "Jag är öppen för .NET-, fullstack- och AI-roller. Hör av dig så pratar vi agenter, verktyg och vad du bygger.",
+            ctaButton: "Hör av dig",
+            liveButton: "Live-sajt",
+            githubButton: "Se på GitHub",
+          },
+        },
       },
       {
         name: "Zoki Städ i Väst",
@@ -1036,7 +1214,7 @@ export const content: Record<Locale, Content> = {
             outcomesHeading: "Resultat",
             stackHeading: "Stack",
             ctaHeading: "Vill du bygga något liknande?",
-            ctaBody: "Jag är öppen för .NET / Fullstack-roller. Låt oss prata om vad du bygger.",
+            ctaBody: "Jag är öppen för .NET-, fullstack- och AI-roller. Låt oss prata om vad du bygger.",
             ctaButton: "Kontakta mig",
             liveButton: "Live-sida",
             githubButton: "Visa på GitHub",
@@ -1254,7 +1432,7 @@ export const content: Record<Locale, Content> = {
         focus: "Fokus",
         focusValue: "C# / .NET · Fullstack",
         seeking: "Söker",
-        seekingValue: ".NET / Fullstack-roller",
+        seekingValue: ".NET / Fullstack / AI-roller",
       },
       journey: {
         chapter: "Kapitel",
@@ -1293,7 +1471,7 @@ export const content: Record<Locale, Content> = {
         title1: "Låt oss",
         title2: "bygga något.",
         description:
-          "Öppen för fullstack- och .NET-roller. Bor i Göteborg, redo att flytta för rätt team. Skriv gärna — jag svarar alltid.",
+          "Öppen för fullstack-, .NET- och AI-roller. Bor i Göteborg, redo att flytta för rätt team. Skriv gärna — jag svarar alltid.",
         mailMe: "Maila mig",
         downloadCv: "Ladda ner CV",
         bookCall: "Boka 15-min samtal",

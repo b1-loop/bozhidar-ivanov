@@ -40,6 +40,7 @@ export function CaseStudyView({ slug }: { slug: string }) {
       <Nav />
       <CaseStudyHero project={project} cs={cs} />
       <Overview project={project} cs={cs} />
+      <DemoVideo project={project} />
       <Sections cs={cs} />
       <Outcomes cs={cs} />
       <StackBreakdown cs={cs} />
@@ -172,6 +173,33 @@ function Overview({ project, cs }: { project: Project; cs: CaseStudy }) {
             </div>
           </aside>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function DemoVideo({ project }: { project: Project }) {
+  if (!project.video) return null;
+  return (
+    <section className="relative pb-24">
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)]"
+        >
+          {/* preload="none": the demo only downloads when played */}
+          <video
+            src={project.video}
+            poster={project.poster}
+            controls
+            playsInline
+            preload="none"
+            className="aspect-video w-full bg-black object-contain"
+          />
+        </motion.div>
       </div>
     </section>
   );

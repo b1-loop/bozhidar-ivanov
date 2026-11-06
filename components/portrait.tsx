@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const PORTRAIT_SRC = "/portrait.png";
+const PORTRAIT_SRC = "/portrait.webp";
 
 function initials(name: string) {
   return name

@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const alt =
-  "Bozhidar Ivanov — Fullstack Developer · Gothenburg";
+  "Bozhidar Ivanov — Fullstack .NET Developer · AI-Driven Platforms · Software Engineer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -168,7 +168,7 @@ export default async function OGImage() {
                 fontFamily: "monospace",
               }}
             >
-              Fullstack Developer · Gothenburg
+              Fullstack .NET · AI-driven platforms · Software Engineer
             </div>
           </div>
           <div

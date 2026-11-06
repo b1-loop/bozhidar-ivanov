@@ -153,7 +153,7 @@ export function Nav() {
           // Softer blur on mobile — heavy backdrop-blur is expensive on
           // mobile GPUs when it stays visible during scroll.
           scrolled
-            ? "border-b border-white/5 bg-background/85 backdrop-blur-md md:bg-background/80 md:backdrop-blur-xl"
+            ? "border-b border-white/5 bg-background/85 backdrop-blur-md md:bg-background/85 md:backdrop-blur-md"
             : "border-b border-transparent bg-black/30 md:bg-black/25 md:backdrop-blur-[2px]",
         )}
         style={{ paddingTop: "env(safe-area-inset-top)" }}

@@ -7,25 +7,16 @@ import { GithubIcon, LinkedinIcon } from "@/components/icons";
 import { Portrait } from "@/components/portrait";
 import { CopyButton } from "@/components/copy-button";
 import { useContent } from "@/lib/i18n";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 export function Contact() {
   const c = useContent();
   return (
     <section
       id="contact"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Ambient gradient */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          background:
-            "radial-gradient(60% 40% at 50% 0%, rgba(125,211,252,0.10) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 20% 100%, rgba(52,211,153,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 90% 60%, rgba(167,139,250,0.08) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="contact" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         {/* Header */}

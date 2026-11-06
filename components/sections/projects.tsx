@@ -6,6 +6,7 @@ import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
 import { useContent } from "@/lib/i18n";
 import type { Project } from "@/lib/content";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 // Colored gradient per project — used in the visual header of each card
 function accentFor(type: string): string {
@@ -30,18 +31,9 @@ export function Projects() {
   return (
     <section
       id="projects"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Ambient background gradient */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          background:
-            "radial-gradient(50% 40% at 0% 0%, rgba(125,211,252,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 100% 100%, rgba(251,191,36,0.06) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="projects" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         <div className="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">
