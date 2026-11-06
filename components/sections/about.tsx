@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Sun, Moon, Sunrise, Sunset } from "lucide-react";
 import { useContent, useLocale } from "@/lib/i18n";
 import type { Locale } from "@/lib/content";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
 
@@ -105,18 +106,9 @@ export function About() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Ambient gradient */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(50% 40% at 15% 0%, rgba(125,211,252,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 85% 100%, rgba(251,191,36,0.06) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="about" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         <div className="mb-16 grid grid-cols-1 gap-10 lg:grid-cols-12">
@@ -201,7 +193,7 @@ export function About() {
                 className="font-display text-xl italic text-foreground/70"
                 style={{ transform: "rotate(-4deg)" }}
               >
-                — {c.personal.name.split(" ")[0]}
+                — {c.personal.name}
               </span>
             </motion.div>
           </div>

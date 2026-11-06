@@ -161,3 +161,73 @@ body {
     animation: none;
   }
 }
+
+/* Film grain for section backdrops — static tile, no blend mode (cheap to composite) */
+.grain {
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 200px 200px;
+}
+
+/* B1 bot — idle motion in CSS so it never costs main-thread JS */
+@keyframes bot-spin { to { transform: rotate(360deg); } }
+@keyframes bot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+@keyframes bot-flicker {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+@keyframes bot-blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.12); }
+}
+@keyframes bot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.bot-spin { animation: bot-spin 10s linear infinite; }
+.bot-spin-rev { animation: bot-spin 10s linear infinite reverse; }
+.bot-pulse { animation: bot-pulse 2.2s ease-in-out infinite; }
+.bot-flicker { animation: bot-flicker 2.4s ease-in-out infinite; }
+.bot-blink { animation: bot-blink 4.5s ease-in-out infinite; }
+.bot-bob { animation: bot-bob 3.2s ease-in-out infinite; }
+[data-still] .bot-spin, [data-still] .bot-spin-rev, [data-still] .bot-pulse,
+[data-still] .bot-flicker, [data-still] .bot-blink, [data-still].bot-head * {
+  animation: none;
+}
+[data-paused] * {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bot-spin, .bot-spin-rev, .bot-pulse, .bot-flicker, .bot-blink, .bot-bob { animation: none; }
+}
+
+/* Boot intro terminal cursor — a pseudo-element, so typing never shifts layout */
+@keyframes term-blink { 50% { opacity: 0; } }
+.term-cursor::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.18em;
+  background: var(--cursor, rgba(255, 255, 255, 0.8));
+  animation: term-blink 1s steps(1) infinite;
+}
+
+/* Off-screen sections (flagged by <OffscreenPause />) stop their CSS animations */
+[data-offscreen],
+[data-offscreen] * {
+  animation-play-state: paused !important;
+}
+
+/* Boot intro — hidden before paint for reduced motion; locks scroll while running */
+html[data-intro="skip"] .boot-intro {
+  display: none;
+}
+
+html:not([data-intro="skip"]):has(.boot-intro[data-state="run"]) {
+  overflow: hidden;
+}

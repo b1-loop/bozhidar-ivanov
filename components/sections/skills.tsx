@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/i18n";
 import type { SkillGroup } from "@/lib/content";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 function CategoryIcon({ category, className }: { category: string; className?: string }) {
   const key = category.toLowerCase();
@@ -27,6 +28,18 @@ function CategoryIcon({ category, className }: { category: string; className?: s
         <rect x="3" y="14" width="18" height="6" rx="1" />
         <circle cx="7" cy="7" r="0.5" fill={stroke} />
         <circle cx="7" cy="17" r="0.5" fill={stroke} />
+      </svg>
+    );
+  }
+  if (key.startsWith("ai")) {
+    return (
+      <svg {...props}>
+        <rect x="5" y="8" width="14" height="11" rx="3" />
+        <path d="M12 8V5" />
+        <circle cx="12" cy="4" r="1" />
+        <circle cx="9.5" cy="13" r="1" fill={stroke} />
+        <circle cx="14.5" cy="13" r="1" fill={stroke} />
+        <path d="M9.5 16.5h5M3 12v3M21 12v3" />
       </svg>
     );
   }
@@ -105,18 +118,9 @@ export function Skills() {
   return (
     <section
       id="skills"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Subtle gradient background */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(60% 50% at 50% 0%, rgba(125,211,252,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 100% 100%, rgba(167,139,250,0.08) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="skills" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         <div className="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">

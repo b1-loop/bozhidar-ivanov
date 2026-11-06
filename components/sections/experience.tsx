@@ -10,6 +10,7 @@ import {
 import { useContent } from "@/lib/i18n";
 import type { Experience as ExperienceItem } from "@/lib/content";
 import { AnimatedNumber } from "@/components/animated-number";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 function isCurrent(period: string) {
   return /now|nu|present|nuvarande/i.test(period);
@@ -51,18 +52,9 @@ export function Experience() {
   return (
     <section
       id="experience"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Ambient gradient */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(50% 40% at 100% 0%, rgba(167,139,250,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 0% 100%, rgba(52,211,153,0.06) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="experience" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         <div className="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">

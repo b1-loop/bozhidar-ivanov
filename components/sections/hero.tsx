@@ -9,6 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useContent } from "@/lib/i18n";
+import { IntroReplay } from "@/components/boot-intro";
 
 // One shared Unsplash URL for both the full-bleed background and the window
 // scene, so the browser hits the cache instead of downloading twice. srcSet
@@ -152,6 +153,9 @@ export function Hero() {
 
       <div className="noise opacity-30" />
 
+      {/* Entrance animations replay when the boot intro reveals the page. Images
+          stay mounted (only text is replayed) so LCP isn't pushed back. */}
+      <IntroReplay>
       {/* Corner metadata — with glass panels for readability, hidden on very small screens */}
       <div className="pointer-events-none absolute inset-x-0 top-20 z-30 hidden justify-between px-3 font-mono text-[9px] uppercase tracking-[0.25em] sm:flex md:top-24 md:px-10 md:text-[10px] md:tracking-[0.3em]">
         <motion.div
@@ -179,11 +183,12 @@ export function Hero() {
           <div className="mt-1 tabular-nums text-white">{time}</div>
         </motion.div>
       </div>
+      </IntroReplay>
 
       {/* The airplane window */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 mx-auto flex w-full flex-1 items-center justify-center px-3 pt-32 pb-6 sm:px-4 sm:pt-28 sm:pb-8 md:px-10"
+        className="relative z-10 mx-auto flex w-full flex-1 items-center justify-center will-change-transform px-3 pt-32 pb-6 sm:px-4 sm:pt-28 sm:pb-8 md:px-10"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.94 }}
@@ -193,7 +198,9 @@ export function Hero() {
           style={{ height: "min(82svh, 800px)" }}
         >
           <AirplaneWindow sceneX={sceneX} sceneY={sceneY}>
-            <HeroContent />
+            <IntroReplay>
+              <HeroContent />
+            </IntroReplay>
           </AirplaneWindow>
         </motion.div>
       </motion.div>
@@ -290,12 +297,21 @@ function HeroContent() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.7 }}
-        className="mt-3 font-mono text-[10px] uppercase tracking-[0.35em] text-white/80"
+        className="mt-3 font-mono text-[10px] uppercase leading-relaxed tracking-[0.22em] text-white/80 sm:tracking-[0.35em]"
         style={{ textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}
       >
-        {c.personal.role}
-        <span className="mx-2 text-white/40">·</span>
-        {c.personal.coordsCity.split(",")[0]}
+        {c.personal.role.split(" · ").map((part, i, parts) => (
+          <span key={part} className="block">
+            {part}
+            {i === parts.length - 1 && (
+              // City only where there's room — on phones it would wrap the line
+              <span className="hidden sm:inline">
+                <span className="mx-2 text-white/40">·</span>
+                {c.personal.coordsCity.split(",")[0]}
+              </span>
+            )}
+          </span>
+        ))}
       </motion.p>
 
       <motion.a

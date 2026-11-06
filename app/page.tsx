@@ -7,10 +7,14 @@ import { Projects } from "@/components/sections/projects";
 import { Experience } from "@/components/sections/experience";
 import { References } from "@/components/sections/references";
 import { Contact } from "@/components/sections/contact";
+import { AiBot } from "@/components/ai-bot";
+import { BootIntro } from "@/components/boot-intro";
+import { OffscreenPause } from "@/components/offscreen-pause";
 
 export default function Home() {
   return (
     <main className="relative min-h-screen bg-background text-foreground">
+      <BootIntro />
       <Nav />
       <Hero />
       <Journey />
@@ -20,6 +24,8 @@ export default function Home() {
       <Experience />
       <References />
       <Contact />
+      <AiBot />
+      <OffscreenPause />
     </main>
   );
 }

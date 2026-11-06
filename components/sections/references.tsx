@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useContent } from "@/lib/i18n";
 import type { Reference } from "@/lib/content";
+import { SectionBackdrop } from "@/components/section-backdrop";
 
 function initials(name: string) {
   return name
@@ -34,18 +35,9 @@ export function References() {
   return (
     <section
       id="references"
-      className="relative overflow-hidden border-t border-white/5 py-32"
+      className="relative overflow-hidden py-32"
     >
-      {/* Ambient gradient */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-30"
-        style={{
-          background:
-            "radial-gradient(50% 40% at 20% 20%, rgba(125,211,252,0.08) 0%, transparent 60%)," +
-            "radial-gradient(50% 40% at 80% 80%, rgba(251,191,36,0.06) 0%, transparent 60%)",
-        }}
-      />
+      <SectionBackdrop variant="references" />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
         <div className="mb-20 grid grid-cols-1 gap-10 lg:grid-cols-12">
