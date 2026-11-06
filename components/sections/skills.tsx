@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useContent, useLocale } from "@/lib/i18n";
 import { SectionBackdrop } from "@/components/section-backdrop";
 
@@ -87,7 +87,6 @@ export function Skills() {
   const c = useContent();
   const { locale } = useLocale();
   const t = COCKPIT_COPY[locale];
-  const reduce = useReducedMotion();
   const groups = c.skills;
   const [selected, setSelected] = useState(0);
   const deskRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -267,17 +266,16 @@ export function Skills() {
                       </div>
                       <ul className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
                         {group.items.map((item, i) => (
-                          <motion.li
+                          <li
                             key={item}
-                            initial={reduce ? false : { opacity: 0, x: -6 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.18, delay: reduce ? 0 : Math.min(i * 0.03, 0.4) }}
-                            className="flex items-baseline gap-2 text-[11px] uppercase tracking-[0.06em] text-white/90 sm:text-xs"
+                            // CSS stagger (one keyframe) instead of a motion component per row
+                            style={{ animationDelay: `${Math.min(i * 30, 400)}ms` }}
+                            className="mfd-row flex items-baseline gap-2 text-[11px] uppercase tracking-[0.06em] text-white/90 sm:text-xs"
                           >
                             <span className="min-w-0 break-words">{item}</span>
                             <span aria-hidden className="mb-[3px] min-w-4 flex-1 border-b border-dotted border-white/20" />
                             <span className="text-emerald-300">✓</span>
-                          </motion.li>
+                          </li>
                         ))}
                       </ul>
                       <p className="mt-4 text-[10px] uppercase tracking-[0.2em] text-emerald-300/80">■ {t.complete}</p>

@@ -7,10 +7,9 @@ import { Projects } from "@/components/sections/projects";
 import { Experience } from "@/components/sections/experience";
 import { References } from "@/components/sections/references";
 import { Contact } from "@/components/sections/contact";
-import { AiBot } from "@/components/ai-bot";
 import { BootIntro } from "@/components/boot-intro";
 import { OffscreenPause } from "@/components/offscreen-pause";
-import { FlightExperience } from "@/components/flight-experience";
+import { DeferredWidgets } from "@/components/deferred-widgets";
 
 export default function Home() {
   return (
@@ -25,9 +24,8 @@ export default function Home() {
       <Experience />
       <References />
       <Contact />
-      <AiBot />
       <OffscreenPause />
-      <FlightExperience />
+      <DeferredWidgets />
     </main>
   );
 }

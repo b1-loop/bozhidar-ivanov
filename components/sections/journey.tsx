@@ -22,7 +22,7 @@ export function Journey() {
       className="relative"
       // svh, not dvh: dvh changes as the mobile URL bar collapses, which would
       // resize this tall section mid-scroll and make the page jump
-      style={{ height: `${total * 120}svh` }}
+      style={{ height: `${total * 90}svh` }}
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
         <div className="absolute inset-0">

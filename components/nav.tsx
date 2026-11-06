@@ -22,26 +22,30 @@ function useActiveSection(sectionIds: string[]): string | null {
     if (typeof window === "undefined") return;
     let raf = 0;
 
+    // Section tops are measured once (and again on resize / layout changes),
+    // so scrolling only does arithmetic — no getBoundingClientRect per frame.
+    let tops: { id: string; top: number }[] = [];
+    let docH = 0;
+    const measure = () => {
+      tops = sectionIds
+        .map((id) => {
+          const el = document.getElementById(id);
+          return el ? { id, top: el.getBoundingClientRect().top + window.scrollY } : null;
+        })
+        .filter((x): x is { id: string; top: number } => !!x);
+      docH = document.documentElement.scrollHeight;
+    };
+
     const compute = () => {
       // Sensor line ~28% down from the top of the viewport
       const sensor = window.scrollY + window.innerHeight * 0.28;
-      // Also handle bottom-of-page: if we're near the bottom, force last section
-      const nearBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 40;
-
-      if (nearBottom) {
+      // Near the bottom of the page → force the last section
+      if (window.innerHeight + window.scrollY >= docH - 40) {
         setActive(sectionIds[sectionIds.length - 1] ?? null);
         return;
       }
-
       let current: string | null = null;
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        if (top <= sensor) current = id;
-      }
+      for (const t of tops) if (t.top <= sensor) current = t.id;
       setActive(current ?? sectionIds[0] ?? null);
     };
 
@@ -53,12 +57,21 @@ function useActiveSection(sectionIds: string[]): string | null {
       });
     };
 
+    const remeasure = () => {
+      measure();
+      onScroll();
+    };
+    measure();
     compute();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", remeasure);
+    // sections change height (images, the project book, tabs…) → re-measure
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(remeasure) : null;
+    ro?.observe(document.body);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", remeasure);
+      ro?.disconnect();
       if (raf) cancelAnimationFrame(raf);
     };
   }, [key, sectionIds]);

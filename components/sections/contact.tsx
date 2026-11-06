@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, FileDown, ArrowUpRight, Calendar } from "lucide-react";
+import { Mail, Phone, MapPin, FileDown, ArrowUpRight, Languages } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/icons";
 import { Portrait } from "@/components/portrait";
 import { CopyButton } from "@/components/copy-button";
@@ -54,102 +54,8 @@ export function Contact() {
         {/* Boarding pass — the flight lands here */}
         <BoardingPass />
 
-        {/* Primary CTA bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="mb-6 flex flex-wrap gap-3"
-        >
-          <a
-            href={`mailto:${c.personal.email}`}
-            className="group inline-flex items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
-          >
-            <Mail className="h-4 w-4" />
-            {c.ui.contact.mailMe}
-            <span className="transition-transform group-hover:translate-x-0.5">
-              →
-            </span>
-          </a>
-          <a
-            href={c.personal.cal}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-3 rounded-full border border-emerald-500/40 bg-emerald-500/[0.06] px-7 py-4 text-sm font-medium text-emerald-100 backdrop-blur-md transition-all hover:border-emerald-400/60 hover:bg-emerald-500/[0.12]"
-          >
-            <Calendar className="h-4 w-4 text-emerald-300" />
-            {c.ui.contact.bookCall}
-            <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-          <a
-            href={c.personal.cv}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.02] px-7 py-4 text-sm text-foreground/90 backdrop-blur-md transition-all hover:border-white/40 hover:bg-white/5"
-          >
-            <FileDown className="h-4 w-4" />
-            {c.ui.contact.downloadCv}
-          </a>
-        </motion.div>
-
-        {/* Contact bento grid */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-6 lg:grid-cols-12">
-          {/* Featured: Email — largest */}
-          <ContactBigCard
-            href={`mailto:${c.personal.email}`}
-            icon={<Mail className="h-5 w-5" />}
-            label={c.ui.contact.email}
-            value={c.personal.email}
-            accent="#7dd3fc"
-            className="md:col-span-6 lg:col-span-6"
-            note="Fastest way to reach me"
-            copyValue={c.personal.email}
-          />
-
-          {/* Phone */}
-          <ContactCard
-            href={`tel:${c.personal.phone.replace(/\s/g, "")}`}
-            icon={<Phone className="h-5 w-5" />}
-            label={c.ui.contact.phone}
-            value={c.personal.phone}
-            accent="#34d399"
-            className="md:col-span-3 lg:col-span-3"
-            copyValue={c.personal.phone}
-          />
-
-          {/* Location */}
-          <ContactCard
-            icon={<MapPin className="h-5 w-5" />}
-            label={c.ui.contact.location}
-            value={c.personal.location}
-            accent="#fbbf24"
-            className="md:col-span-3 lg:col-span-3"
-          />
-
-          {/* GitHub */}
-          <ContactCard
-            href={c.personal.github}
-            icon={<GithubIcon className="h-5 w-5" />}
-            label={c.ui.contact.github}
-            value={`@${c.personal.github.replace(/\/$/, "").split("/").pop() ?? ""}`}
-            accent="#a78bfa"
-            className="md:col-span-3 lg:col-span-4"
-          />
-
-          {/* LinkedIn */}
-          <ContactCard
-            href={c.personal.linkedin}
-            icon={<LinkedinIcon className="h-5 w-5" />}
-            label={c.ui.contact.linkedin}
-            value={c.personal.name}
-            accent="#60a5fa"
-            className="md:col-span-3 lg:col-span-4"
-          />
-
-          {/* Languages */}
-          <LanguagesCard className="md:col-span-6 lg:col-span-4" />
-        </div>
+        {/* All contact routes in one compact panel (no duplicate CTA row / bento cards) */}
+        <ContactBar />
 
         {/* Built with strip */}
         <BuiltWith />
@@ -183,6 +89,145 @@ export function Contact() {
         </footer>
       </div>
     </section>
+  );
+}
+
+/**
+ * Every contact route in one panel under the boarding pass, styled like the
+ * pass's information strip: labelled columns with hairline dividers, and a
+ * footer band with location, languages and the CV.
+ */
+function ContactBar() {
+  const c = useContent();
+  const handle = `@${c.personal.github.replace(/\/$/, "").split("/").pop() ?? ""}`;
+  const routes = [
+    {
+      key: "email",
+      label: c.ui.contact.email,
+      value: c.personal.email,
+      href: `mailto:${c.personal.email}`,
+      icon: <Mail className="h-4 w-4" />,
+      color: "#7dd3fc",
+      copy: c.personal.email,
+      wide: true,
+    },
+    {
+      key: "phone",
+      label: c.ui.contact.phone,
+      value: c.personal.phone,
+      href: `tel:${c.personal.phone.replace(/\s/g, "")}`,
+      icon: <Phone className="h-4 w-4" />,
+      color: "#34d399",
+      copy: c.personal.phone,
+    },
+    {
+      key: "github",
+      label: "GitHub",
+      value: handle,
+      href: c.personal.github,
+      icon: <GithubIcon className="h-4 w-4" />,
+      color: "#c084fc",
+      external: true,
+    },
+    {
+      key: "linkedin",
+      label: "LinkedIn",
+      value: c.personal.name,
+      href: c.personal.linkedin,
+      icon: <LinkedinIcon className="h-4 w-4" />,
+      color: "#60a5fa",
+      external: true,
+      // full width on phones so it doesn't sit alone next to an empty cell
+      last: true,
+    },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="relative overflow-hidden rounded-2xl border border-white/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015))] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)]"
+    >
+      {/* same colour stripe as the boarding pass */}
+      <div aria-hidden className="h-[3px] bg-gradient-to-r from-emerald-500 via-cyan-500 to-purple-500 opacity-80" />
+
+      {/* routes */}
+      <div className="grid grid-cols-2 divide-white/[0.07] lg:grid-cols-[1.6fr_1fr_1fr_1fr] lg:divide-x">
+        {routes.map((r) => (
+          <a
+            key={r.key}
+            href={r.href}
+            target={r.external ? "_blank" : undefined}
+            rel={r.external ? "noopener noreferrer" : undefined}
+            className={`group relative flex min-h-[92px] flex-col justify-between gap-3 border-white/[0.07] p-5 transition-colors hover:bg-white/[0.03] max-lg:border-b ${
+              r.wide || r.last ? "col-span-2 lg:col-span-1" : r.key === "phone" ? "max-lg:border-r" : ""
+            } ${r.last ? "max-lg:border-b-0" : ""}`}
+          >
+            {/* hover glow in the route's colour */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{ background: `radial-gradient(80% 120% at 0% 0%, ${r.color}14, transparent 60%)` }}
+            />
+            {/* fixed height so every value lines up, with or without a copy button */}
+            <span className="relative flex h-7 items-center justify-between">
+              <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/45">
+                <span style={{ color: r.color }}>{r.icon}</span>
+                {r.label}
+              </span>
+              {r.copy ? (
+                <CopyButton value={r.copy} className="relative z-10 opacity-60 transition-opacity group-hover:opacity-100 max-lg:opacity-100" />
+              ) : (
+                <ArrowUpRight className="h-4 w-4 text-white/35 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
+              )}
+            </span>
+            <span
+              className={`relative block truncate text-white transition-colors ${
+                r.wide ? "font-display text-2xl tracking-tight sm:text-[1.7rem]" : "text-[15px] font-medium"
+              }`}
+            >
+              {r.value}
+            </span>
+          </a>
+        ))}
+      </div>
+
+      {/* footer band: where I am, what I speak, and the CV */}
+      <div className="flex flex-col gap-4 border-t border-white/[0.07] bg-black/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <span className="flex items-center gap-2 text-sm text-white/80">
+            <MapPin className="h-4 w-4 text-amber-300" />
+            {c.personal.location}
+          </span>
+          <span className="hidden h-4 w-px bg-white/10 sm:block" />
+          <span className="flex flex-wrap items-center gap-1.5">
+            <Languages className="mr-0.5 h-4 w-4 text-pink-300" />
+            {c.personal.languages.map((l) => (
+              <span
+                key={l.name}
+                className="rounded-md border border-white/10 bg-white/[0.03] px-2 py-0.5 text-xs text-white/85"
+                title={l.level}
+              >
+                {l.name}
+                <span className="ml-1.5 font-mono text-[9px] uppercase tracking-wider text-white/40">{l.level}</span>
+              </span>
+            ))}
+          </span>
+        </div>
+        <a
+          href={c.personal.cv}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-medium text-black transition-transform hover:scale-[1.02]"
+        >
+          <FileDown className="h-4 w-4" />
+          {c.ui.contact.downloadCv}
+          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </a>
+      </div>
+    </motion.div>
   );
 }
 
@@ -220,164 +265,7 @@ function AvailabilityStatus() {
   );
 }
 
-function ContactBigCard({
-  href,
-  icon,
-  label,
-  value,
-  accent,
-  className,
-  note,
-  copyValue,
-}: {
-  href?: string;
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  accent: string;
-  className?: string;
-  note?: string;
-  copyValue?: string;
-}) {
-  const inner = (
-    <div className="relative flex h-full flex-col justify-between p-8 md:p-10">
-      {/* Accent orb */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full opacity-30 blur-3xl transition-opacity group-hover:opacity-50"
-        style={{
-          background: `radial-gradient(circle, ${accent}, transparent 70%)`,
-        }}
-      />
 
-      <div className="relative">
-        <div className="mb-6 flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <span
-              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-colors group-hover:border-white/25"
-              style={{ color: accent }}
-            >
-              {icon}
-            </span>
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">
-                {label}
-              </p>
-              {note && (
-                <p className="mt-0.5 text-[10px] text-muted/70">{note}</p>
-              )}
-            </div>
-          </div>
-          {copyValue && <CopyButton value={copyValue} />}
-        </div>
-
-        <p className="font-display text-2xl leading-tight tracking-tight text-foreground transition-colors group-hover:text-white md:text-4xl">
-          {value}
-        </p>
-      </div>
-
-      <div className="relative mt-8 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted transition-colors group-hover:text-foreground/80">
-        <span>Get in touch</span>
-        <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-      </div>
-    </div>
-  );
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7 }}
-      className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.01] transition-all hover:border-white/25 ${className ?? ""}`}
-    >
-      {href ? (
-        <a href={href} className="block h-full">
-          {inner}
-        </a>
-      ) : (
-        inner
-      )}
-    </motion.div>
-  );
-}
-
-function ContactCard({
-  href,
-  icon,
-  label,
-  value,
-  accent,
-  className,
-  copyValue,
-}: {
-  href?: string;
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  accent: string;
-  className?: string;
-  copyValue?: string;
-}) {
-  const inner = (
-    <div className="relative flex h-full flex-col justify-between p-6">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full opacity-25 blur-2xl transition-opacity group-hover:opacity-50"
-        style={{
-          background: `radial-gradient(circle, ${accent}, transparent 70%)`,
-        }}
-      />
-
-      <div className="relative">
-        <div className="mb-4 flex items-center justify-between">
-          <span
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-colors group-hover:border-white/25"
-            style={{ color: accent }}
-          >
-            {icon}
-          </span>
-          <div className="flex items-center gap-2">
-            {copyValue && <CopyButton value={copyValue} />}
-            {href && (
-              <ArrowUpRight className="h-4 w-4 text-white/30 transition-colors group-hover:text-white/70" />
-            )}
-          </div>
-        </div>
-
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">
-          {label}
-        </p>
-        <p className="mt-1 truncate text-base font-medium text-foreground md:text-lg">
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.6, delay: 0.05 }}
-      className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.01] transition-all hover:border-white/25 ${className ?? ""}`}
-    >
-      {href ? (
-        <a
-          href={href}
-          target={href.startsWith("http") ? "_blank" : undefined}
-          rel="noopener noreferrer"
-          className="block h-full"
-        >
-          {inner}
-        </a>
-      ) : (
-        inner
-      )}
-    </motion.div>
-  );
-}
 
 const BUILT_WITH = [
   { name: "Next.js 16", href: "https://nextjs.org" },
@@ -396,7 +284,7 @@ function BuiltWith() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mt-24 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-6 md:p-7"
+      className="mt-12 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-6 md:p-7"
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-8">
         <div className="flex items-center gap-2">
@@ -438,65 +326,3 @@ function BuiltWith() {
   );
 }
 
-function LanguagesCard({ className }: { className?: string }) {
-  const c = useContent();
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.6, delay: 0.1 }}
-      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.01] p-6 ${className ?? ""}`}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-10 -left-10 h-32 w-32 rounded-full opacity-20 blur-2xl"
-        style={{
-          background: "radial-gradient(circle, #f472b6, transparent 70%)",
-        }}
-      />
-
-      <div className="relative">
-        <div className="mb-4 flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-pink-300">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <path d="m5 8 6 6" />
-              <path d="m4 14 6-6 2-3" />
-              <path d="M2 5h12" />
-              <path d="M7 2h1" />
-              <path d="m22 22-5-10-5 10" />
-              <path d="M14 18h6" />
-            </svg>
-          </span>
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted">
-            {c.ui.contact.languages}
-          </p>
-        </div>
-
-        <ul className="space-y-2.5">
-          {c.personal.languages.map((l) => (
-            <li
-              key={l.name}
-              className="flex items-center justify-between border-b border-white/5 pb-2 last:border-b-0 last:pb-0"
-            >
-              <span className="text-sm text-foreground">{l.name}</span>
-              <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
-                {l.level}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </motion.div>
-  );
-}

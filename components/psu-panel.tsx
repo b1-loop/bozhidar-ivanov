@@ -48,6 +48,12 @@ const COPY = {
 /* Two-tone cabin chime, synthesised (no audio file), only ever on a click. */
 let audioCtx: AudioContext | null = null;
 function chime(high = 1320, low = 990) {
+  // Creating an AudioContext is slow (~25 ms on a mid phone). Do it after the
+  // click has painted so the button reacts instantly; the user-gesture
+  // activation is still valid a frame later.
+  window.setTimeout(() => playChime(high, low), 0);
+}
+function playChime(high: number, low: number) {
   try {
     audioCtx ??= new AudioContext();
     const ctx = audioCtx;
