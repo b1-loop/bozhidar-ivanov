@@ -143,6 +143,7 @@ function ChapterImage({
           priority={index === 0}
           sizes="100vw"
           className="object-cover"
+          style={{ objectPosition: chapter.imagePosition }}
         />
       </motion.div>
       <div
@@ -154,6 +155,9 @@ function ChapterImage({
     </motion.div>
   );
 }
+
+// Soft dark halo so text stays readable over busy, bright photos
+const TEXT_SHADOW = "0 1px 2px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.6)";
 
 function Chapter({
   chapter,
@@ -195,7 +199,7 @@ function Chapter({
           />
           <span
             className="font-mono text-xs uppercase tracking-[0.3em]"
-            style={{ color: chapter.accent }}
+            style={{ color: chapter.accent, textShadow: TEXT_SHADOW }}
           >
             {chapterLabel} {String(index + 1).padStart(2, "0")} · {chapter.year}
           </span>
@@ -205,11 +209,11 @@ function Chapter({
           {chapter.title}
         </h2>
 
-        <div className="mt-8 max-w-2xl">
-          <p className="mb-3 text-sm font-medium uppercase tracking-wider text-white/90">
+        <div className="mt-8 max-w-2xl" style={{ textShadow: TEXT_SHADOW }}>
+          <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">
             {chapter.subtitle}
           </p>
-          <p className="text-base leading-relaxed text-white/70 md:text-lg">
+          <p className="text-base leading-relaxed text-white/95 md:text-lg">
             {chapter.description}
           </p>
         </div>

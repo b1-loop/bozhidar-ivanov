@@ -11,6 +11,8 @@ export type JourneyChapter = {
   description: string;
   accent: string;
   image: string;
+  /** CSS object-position — keeps the subject in frame when phones crop the image */
+  imagePosition?: string;
 };
 
 export type SkillGroup = { category: string; items: string[] };
@@ -214,13 +216,14 @@ const shared = {
 } as const;
 
 const images = {
-  factory:
-    "https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=2400&q=80",
-  founder:
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=2400&q=80",
+  // Volvo XC60 — photo by Luca Massimilian on Unsplash (Unsplash License)
+  factory: "/journey/volvo.jpg",
+  // Nissan GT-R detailing — photo by Clément M. on Unsplash (Unsplash License)
+  founder: "/journey/detailing.jpg",
   developer:
     "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=2400&q=80",
-  now: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=2400&q=80",
+  // Silhouette over a city at night (mirrored so the figure sits right of the text)
+  now: "/journey/next.jpg",
 } as const;
 
 export const content: Record<Locale, Content> = {
@@ -251,6 +254,7 @@ export const content: Record<Locale, Content> = {
           "Today I lead projects at InFiNet Code and build fullstack solutions at Devotion Ventures. Next step: a team where I can contribute from day one.",
         accent: "#a78bfa",
         image: images.now,
+        imagePosition: "72% center",
       },
       {
         id: "developer",
@@ -884,6 +888,7 @@ export const content: Record<Locale, Content> = {
           "Idag leder jag projekt på InFiNet Code och bygger fullstack-lösningar på Devotion Ventures. Nästa steg: ett team där jag kan bidra från dag ett.",
         accent: "#a78bfa",
         image: images.now,
+        imagePosition: "72% center",
       },
       {
         id: "developer",
