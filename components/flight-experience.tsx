@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { Bell, Plane, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { INTRO_DONE_EVENT } from "@/components/boot-intro";
@@ -51,7 +51,13 @@ export function FlightExperience() {
   const { scrollY } = useScroll();
 
   const [visible, setVisible] = useState(false);
-  const [flight, setFlight] = useState({ alt: 10700, spd: 850, p: 0 });
+  // Flight progress drives the readouts directly (motion values → no React render per frame)
+  const progress = useMotionValue(0);
+  const altText = useTransform(progress, (p) => fmt(Math.round((10700 * Math.pow(1 - p, 1.15)) / 10) * 10));
+  const spdText = useTransform(progress, (p) => String(Math.round(p < 0.85 ? 850 - 590 * (p / 0.85) : 260 * ((1 - p) / 0.15))));
+  const barScale = useTransform(progress, (p) => `scaleX(${p})`);
+  const planeLeft = useTransform(progress, (p) => `${p * 100}%`);
+  const [phaseKey, setPhaseKey] = useState<"cruise" | "descent" | "approach">("cruise");
   const [landed, setLanded] = useState(false);
   const [notice, setNotice] = useState<Kind | null>(null);
   const [shaking, setShaking] = useState(false);
@@ -126,9 +132,9 @@ export function FlightExperience() {
 
     // --- flight instrument ---
     const p = Math.min(1, Math.max(0, y / landingTop.current));
-    const alt = Math.round((10700 * Math.pow(1 - p, 1.15)) / 10) * 10;
-    const spd = Math.round(p < 0.85 ? 850 - 590 * (p / 0.85) : 260 * ((1 - p) / 0.15));
-    setFlight((f) => (f.alt === alt && f.spd === spd ? f : { alt, spd, p }));
+    progress.set(p);
+    // React state only changes at a handful of thresholds (setState with the same value is a no-op)
+    setPhaseKey(p < 0.55 ? "cruise" : p < 0.85 ? "descent" : "approach");
     setVisible(y > window.innerHeight * 0.6);
 
     const isLanded = p >= 0.995;
@@ -180,11 +186,7 @@ export function FlightExperience() {
 
   const phase = landed
     ? t.phases.landed
-    : flight.p < 0.55
-      ? t.phases.cruise
-      : flight.p < 0.85
-        ? t.phases.descent
-        : t.phases.approach;
+    : t.phases[phaseKey];
 
   const noticeContent =
     notice === "captain"
@@ -225,11 +227,11 @@ export function FlightExperience() {
               <div className="mt-1.5 flex justify-between gap-2 whitespace-nowrap text-[10px] tabular-nums tracking-[0.08em] sm:text-[11px] sm:tracking-[0.12em]">
                 <span>
                   <span className="text-white/45">ALT </span>
-                  {fmt(flight.alt)} M
+                  <motion.span>{altText}</motion.span> M
                 </span>
                 <span>
                   <span className="text-white/45">SPD </span>
-                  {flight.spd} KM/H
+                  <motion.span>{spdText}</motion.span> KM/H
                 </span>
               </div>
             )}
@@ -238,14 +240,13 @@ export function FlightExperience() {
             <div className="mt-2 flex items-center gap-2 text-[8px] uppercase tracking-[0.2em] text-white/45">
               <span>GOT</span>
               <div className="relative h-px flex-1 bg-white/15">
-                <div
-                  className="absolute inset-y-0 left-0 origin-left bg-gradient-to-r from-sky-300 to-emerald-300"
-                  style={{ width: "100%", transform: `scaleX(${flight.p})` }}
+                <motion.div
+                  className="absolute inset-y-0 left-0 w-full origin-left bg-gradient-to-r from-sky-300 to-emerald-300"
+                  style={{ transform: barScale }}
                 />
-                <Plane
-                  className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 fill-white text-white"
-                  style={{ left: `${flight.p * 100}%` }}
-                />
+                <motion.span className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2" style={{ left: planeLeft }}>
+                  <Plane className="h-3 w-3 rotate-45 fill-white text-white" />
+                </motion.span>
               </div>
               <span>YOU</span>
             </div>

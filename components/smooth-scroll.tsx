@@ -11,12 +11,16 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       typeof window !== "undefined" &&
       (window.matchMedia("(pointer: coarse)").matches ||
         window.matchMedia("(max-width: 768px)").matches);
-    if (isTouch) return;
+    // Respect "reduce motion": plain native scrolling
+    if (isTouch || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    // lerp-based smoothing follows the wheel more tightly than a fixed
+    // 1.2 s duration — still smooth, but responds immediately to direction
+    // changes and small scroll nudges.
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.12,
       smoothWheel: true,
+      wheelMultiplier: 1,
     });
 
     function raf(time: number) {

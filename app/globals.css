@@ -30,6 +30,9 @@
 
 html {
   scroll-behavior: smooth;
+  /* no 300 ms double-tap-zoom delay on taps, no grey tap flash on iOS */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html.lenis,
@@ -202,6 +205,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .turbulence .flight-shake { animation: none; }
 }
+
+/* Cockpit checklist rows fade in with a CSS stagger */
+@keyframes mfd-row-in {
+  from { opacity: 0; transform: translateX(-6px); }
+}
+.mfd-row { animation: mfd-row-in 0.18s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .mfd-row { animation: none; } }
 
 /* B1 bot — idle motion in CSS so it never costs main-thread JS */
 @keyframes bot-spin { to { transform: rotate(360deg); } }
