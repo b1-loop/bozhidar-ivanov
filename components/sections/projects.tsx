@@ -8,27 +8,14 @@ import { useContent } from "@/lib/i18n";
 import type { Project } from "@/lib/content";
 import { SectionBackdrop } from "@/components/section-backdrop";
 import { LazyVideo } from "@/components/lazy-video";
-
-// Colored gradient per project — used in the visual header of each card
-function accentFor(type: string): string {
-  const k = type.toLowerCase();
-  if (k.includes("saas") || k.includes("edtech")) return "#2dd4bf"; // teal
-  if (k.includes("fintech") || k.includes("pay")) return "#7dd3fc"; // cyan
-  if (k.includes("ai") || k.includes("assist")) return "#a78bfa"; // purple
-  if (k.includes("client") || k.includes("kund")) return "#fbbf24"; // amber
-  if (k.includes("web app") || k.includes("web")) return "#34d399"; // emerald
-  if (k.includes("portal") || k.includes("dashboard")) return "#f472b6"; // pink
-  if (k.includes("finance") || k.includes("salary")) return "#f97316"; // orange
-  if (k.includes("database") || k.includes("first")) return "#60a5fa"; // blue
-  if (k.includes("api")) return "#22d3ee"; // sky
-  if (k.includes("scalable") || k.includes("skalbart")) return "#a3e635"; // lime
-  if (k.includes("productiv") || k.includes("produktiv")) return "#fb7185"; // rose
-  if (k.includes("logic") || k.includes("logik")) return "#c084fc"; // violet
-  return "#94a3b8"; // slate default
-}
+import { accentFor } from "@/lib/project-accent";
+import { ProjectBook } from "@/components/project-book";
 
 export function Projects() {
   const c = useContent();
+  // Featured projects get full cards; everything else lives in the flip-book
+  const featured = c.projects.filter((p) => p.featured || p.flagship);
+  const rest = c.projects.filter((p) => !p.featured && !p.flagship);
   return (
     <section
       id="projects"
@@ -54,7 +41,7 @@ export function Projects() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-6 lg:grid-cols-12">
-          {c.projects.map((p, i) => {
+          {featured.map((p, i) => {
             const span = p.flagship
               ? "sm:col-span-2 md:col-span-6 lg:col-span-12"
               : p.featured
@@ -71,6 +58,8 @@ export function Projects() {
             );
           })}
         </div>
+
+        {rest.length > 0 && <ProjectBook projects={rest} />}
 
         <div className="mt-14 flex justify-center">
           <a

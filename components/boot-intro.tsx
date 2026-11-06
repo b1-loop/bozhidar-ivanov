@@ -80,6 +80,9 @@ export function BootIntro() {
 
   useEffect(() => {
     if (document.documentElement.dataset.intro === "skip") return;
+    // Every load is a fresh take-off: don't let the browser restore the old
+    // scroll position underneath the intro
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
 
     const controls = animate(progress, [0, 27, 33, 62, 84, 100], {
