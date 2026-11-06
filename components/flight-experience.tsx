@@ -276,7 +276,7 @@ export function FlightExperience() {
               type="button"
               onClick={() => setNotice(null)}
               aria-label={t.close}
-              className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+              className="absolute right-1.5 top-1.5 flex h-10 w-10 items-center sm:right-2.5 sm:top-2.5 sm:h-7 sm:w-7 justify-center rounded-full text-white/50 transition-colors hover:bg-white/10 hover:text-white"
             >
               <X className="h-3.5 w-3.5" />
             </button>

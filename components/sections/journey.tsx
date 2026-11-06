@@ -20,7 +20,9 @@ export function Journey() {
       id="journey"
       ref={containerRef}
       className="relative"
-      style={{ height: `${total * 120}dvh` }}
+      // svh, not dvh: dvh changes as the mobile URL bar collapses, which would
+      // resize this tall section mid-scroll and make the page jump
+      style={{ height: `${total * 120}svh` }}
     >
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
         <div className="absolute inset-0">
@@ -250,7 +252,8 @@ function ChapterImage({
           src={chapter.image}
           alt={chapter.title}
           fill
-          priority={index === 0}
+          // Below the hero: never compete with the hero's LCP image
+          fetchPriority="low"
           sizes="100vw"
           className="object-cover"
           style={{ objectPosition: chapter.imagePosition }}

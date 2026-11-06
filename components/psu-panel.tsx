@@ -124,7 +124,7 @@ function PanelButton({
         onMouseLeave={() => setHover(false)}
         onFocus={() => setHover(true)}
         onBlur={() => setHover(false)}
-        className={`flex h-8 w-8 items-center justify-center rounded-full border bg-gradient-to-b from-[#3a3f45] to-[#24282d] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_2px_4px_rgba(0,0,0,0.5)] outline-none transition-all duration-200 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 active:translate-y-px active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] ${
+        className={`flex h-10 w-10 items-center justify-center rounded-full border bg-gradient-to-b sm:h-8 sm:w-8 from-[#3a3f45] to-[#24282d] text-white/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_2px_4px_rgba(0,0,0,0.5)] outline-none transition-all duration-200 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 active:translate-y-px active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] ${
           active ? glow : "border-white/10"
         }`}
       >
@@ -227,7 +227,7 @@ export function PsuPanel() {
             type="button"
             aria-label={t.ventHint}
             onClick={twistVent}
-            className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#c9ced4,#6b7178_60%,#3a3e43)] shadow-[0_2px_4px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.5)] outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full sm:h-8 sm:w-8 bg-[radial-gradient(circle_at_35%_30%,#c9ced4,#6b7178_60%,#3a3e43)] shadow-[0_2px_4px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.5)] outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           >
             <motion.span
               animate={{ rotate: vent * 90 }}
@@ -250,7 +250,7 @@ export function PsuPanel() {
             type="button"
             aria-label={t.available}
             onClick={() => flashTip("available")}
-            className={`flex cursor-default items-center gap-1.5 rounded-md border px-2 py-1 font-mono outline-none focus-visible:ring-2 focus-visible:ring-white/40 text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 sm:text-[10px] ${
+            className={`flex cursor-default items-center gap-1.5 rounded-md border px-2.5 py-2 font-mono sm:px-2 sm:py-1 outline-none focus-visible:ring-2 focus-visible:ring-white/40 text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 sm:text-[10px] ${
               signsOn
                 ? "border-emerald-300/40 bg-emerald-400/15 text-emerald-200 shadow-[0_0_12px_rgba(52,211,153,0.35)]"
                 : "border-white/10 bg-black/30 text-white/25"
@@ -271,7 +271,7 @@ export function PsuPanel() {
             type="button"
             aria-label={t.noBugs}
             onClick={() => flashTip("bugs")}
-            className={`flex cursor-default items-center gap-1.5 rounded-md border px-2 py-1 font-mono outline-none focus-visible:ring-2 focus-visible:ring-white/40 text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 sm:text-[10px] ${
+            className={`flex cursor-default items-center gap-1.5 rounded-md border px-2.5 py-2 font-mono sm:px-2 sm:py-1 outline-none focus-visible:ring-2 focus-visible:ring-white/40 text-[9px] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 sm:text-[10px] ${
               signsOn
                 ? "border-amber-300/40 bg-amber-400/15 text-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.35)]"
                 : "border-white/10 bg-black/30 text-white/25"

@@ -383,7 +383,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
-        poster: "/projects/jarvis-desktop-poster.png",
+        poster: "/projects/jarvis-desktop-poster.webp",
         slug: "jarvis-desktop",
         caseStudy: {
           tagline: "A voice-controlled AI agent for Windows: Python is the conductor, C++ is the muscle.",
@@ -474,7 +474,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/zoki-stad-vast-demo.mp4",
-        poster: "/projects/zoki-stad-vast-poster.jpg",
+        poster: "/projects/zoki-stad-vast-poster.webp",
         wideVideo: true,
       },
       {
@@ -488,7 +488,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/digital-teknik-gbg-demo.mp4",
-        poster: "/projects/digital-teknik-gbg-poster.jpg",
+        poster: "/projects/digital-teknik-gbg-poster.webp",
         wideVideo: true,
       },
       {
@@ -502,7 +502,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/cosmetism-demo.mp4",
-        poster: "/projects/cosmetism-poster.jpg",
+        poster: "/projects/cosmetism-poster.webp",
         wideVideo: true,
       },
       {
@@ -1017,7 +1017,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/jarvis-desktop-demo.mp4",
-        poster: "/projects/jarvis-desktop-poster.png",
+        poster: "/projects/jarvis-desktop-poster.webp",
         slug: "jarvis-desktop",
         caseStudy: {
           tagline: "En röststyrd AI-agent för Windows: Python dirigerar, C++ gör grovjobbet.",
@@ -1108,7 +1108,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/zoki-stad-vast-demo.mp4",
-        poster: "/projects/zoki-stad-vast-poster.jpg",
+        poster: "/projects/zoki-stad-vast-poster.webp",
         wideVideo: true,
       },
       {
@@ -1122,7 +1122,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/digital-teknik-gbg-demo.mp4",
-        poster: "/projects/digital-teknik-gbg-poster.jpg",
+        poster: "/projects/digital-teknik-gbg-poster.webp",
         wideVideo: true,
       },
       {
@@ -1136,7 +1136,7 @@ export const content: Record<Locale, Content> = {
         featured: true,
         flagship: true,
         video: "/projects/cosmetism-demo.mp4",
-        poster: "/projects/cosmetism-poster.jpg",
+        poster: "/projects/cosmetism-poster.webp",
         wideVideo: true,
       },
       {
