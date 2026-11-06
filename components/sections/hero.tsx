@@ -340,7 +340,7 @@ function AirplaneWindow({
   };
 
   return (
-    <div className="relative mx-auto h-full w-full">
+    <div className="flight-shake relative mx-auto h-full w-full">
       {/* Halo — aurora light spilling around the window */}
       <div
         aria-hidden

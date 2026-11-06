@@ -8,6 +8,7 @@ import { Portrait } from "@/components/portrait";
 import { CopyButton } from "@/components/copy-button";
 import { useContent } from "@/lib/i18n";
 import { SectionBackdrop } from "@/components/section-backdrop";
+import { BoardingPass } from "@/components/boarding-pass";
 
 export function Contact() {
   const c = useContent();
@@ -49,6 +50,9 @@ export function Contact() {
             </p>
           </div>
         </div>
+
+        {/* Boarding pass — the flight lands here */}
+        <BoardingPass />
 
         {/* Primary CTA bar */}
         <motion.div

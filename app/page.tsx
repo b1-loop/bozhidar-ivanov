@@ -10,6 +10,7 @@ import { Contact } from "@/components/sections/contact";
 import { AiBot } from "@/components/ai-bot";
 import { BootIntro } from "@/components/boot-intro";
 import { OffscreenPause } from "@/components/offscreen-pause";
+import { FlightExperience } from "@/components/flight-experience";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       <Contact />
       <AiBot />
       <OffscreenPause />
+      <FlightExperience />
     </main>
   );
 }
