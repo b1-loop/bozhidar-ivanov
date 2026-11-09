@@ -73,6 +73,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </noscript>
       </head>
       <body>
+        <a href="#journey" className="skip-link">
+          Skip to content
+        </a>
         <MotionConfig reducedMotion="user">
           <LocaleProvider>
             <ScrollProgress />

@@ -208,7 +208,7 @@ export function FlightExperience() {
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.35 }}
             aria-hidden
-            className={`flight-shake pointer-events-none fixed bottom-4 left-4 z-[34] w-[224px] rounded-xl border border-white/10 bg-black/60 px-3 py-2.5 font-mono text-white/85 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-md sm:bottom-6 sm:left-6 sm:w-[236px] ${
+            className={`flight-shake pointer-events-none fixed bottom-4 left-4 z-[34] w-[224px] rounded-xl border border-white/10 bg-[#05070c]/90 px-3 py-2.5 font-mono text-white/85 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.8)] sm:bottom-6 sm:left-6 sm:w-[236px] ${
               shaking ? "is-shaking" : ""
             }`}
           >
@@ -264,7 +264,7 @@ export function FlightExperience() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.98 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-3 bottom-[118px] z-[60] mx-auto max-w-md rounded-2xl border border-white/12 bg-[#0c1018]/92 p-4 pr-10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl sm:bottom-8"
+            className="fixed inset-x-3 bottom-[118px] z-[60] mx-auto max-w-md rounded-2xl border border-white/12 bg-[#0c1018]/95 p-4 pr-10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] sm:bottom-8"
           >
             <div className="flex items-start gap-3">
               <span

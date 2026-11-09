@@ -13,7 +13,7 @@ import { DeferredWidgets } from "@/components/deferred-widgets";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-background text-foreground">
+    <main id="main" className="relative min-h-screen bg-background text-foreground">
       <BootIntro />
       <Nav />
       <Hero />

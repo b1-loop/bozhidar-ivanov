@@ -166,7 +166,7 @@ export function Nav() {
           // Softer blur on mobile — heavy backdrop-blur is expensive on
           // mobile GPUs when it stays visible during scroll.
           scrolled
-            ? "border-b border-white/5 bg-background/85 backdrop-blur-md md:bg-background/85 md:backdrop-blur-md"
+            ? "border-b border-white/5 bg-background/90 backdrop-blur-sm"
             : "border-b border-transparent bg-black/30 md:bg-black/25 md:backdrop-blur-[2px]",
         )}
         style={{ paddingTop: "env(safe-area-inset-top)" }}
@@ -192,7 +192,7 @@ export function Nav() {
             <span className="text-white/50">.</span>
           </a>
 
-          <ul className="hidden items-center gap-1 text-sm drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] md:flex">
+          <ul className="hidden items-center gap-1 text-sm drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] lg:flex">
             {links.map((l) => {
               const isActive = activeId === l.id;
               return (
@@ -249,7 +249,7 @@ export function Nav() {
               onClick={() => setMobileOpen((v) => !v)}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-black/60 md:hidden"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-all hover:border-white/50 hover:bg-black/60 lg:hidden"
             >
               {mobileOpen ? (
                 <X className="h-4 w-4" />
@@ -299,7 +299,7 @@ function MobileMenu({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
         onClick={close}
-        className="fixed inset-0 z-40 bg-black/80 backdrop-blur-md md:hidden"
+        className="fixed inset-0 z-40 bg-black/80 backdrop-blur-md lg:hidden"
         aria-hidden
       />
       <motion.div
@@ -311,7 +311,7 @@ function MobileMenu({
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className="fixed inset-x-0 z-40 mx-3 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e1220] to-[#050710] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] md:hidden"
+        className="fixed inset-x-0 z-40 mx-3 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e1220] to-[#050710] shadow-[0_40px_120px_-20px_rgba(0,0,0,0.9)] lg:hidden"
         style={{ top: "calc(env(safe-area-inset-top) + 68px)" }}
       >
         {/* Ambient glow */}
