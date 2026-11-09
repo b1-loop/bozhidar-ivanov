@@ -193,9 +193,10 @@ export function References() {
                       {i === index && (
                         <motion.span
                           key={`${index}-${paused}`}
-                          className="absolute inset-y-0 left-0 rounded-full bg-white/70"
-                          initial={{ width: paused || reduce ? "100%" : "0%" }}
-                          animate={{ width: "100%" }}
+                          // scaleX, not width: a transform animates on the compositor (no layout per frame)
+                          className="absolute inset-0 origin-left rounded-full bg-white/70"
+                          initial={{ scaleX: paused || reduce ? 1 : 0 }}
+                          animate={{ scaleX: 1 }}
                           transition={{ duration: paused || reduce ? 0 : AUTO_MS / 1000, ease: "linear" }}
                         />
                       )}

@@ -169,6 +169,7 @@ export function BoardingPass() {
             href={c.personal.linkedin}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={`LinkedIn — ${c.personal.name}`}
             className="rounded-lg bg-white p-2 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)] transition-transform hover:scale-[1.03]"
           >
             <QrCode value={c.personal.linkedin} className="h-24 w-24 text-[#16130f] sm:h-28 sm:w-28" />

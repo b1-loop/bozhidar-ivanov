@@ -213,6 +213,29 @@ body {
 .mfd-row { animation: mfd-row-in 0.18s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .mfd-row { animation: none; } }
 
+/* Keyboard focus: one consistent, visible ring everywhere (mouse clicks don't show it) */
+:where(a, button, [role="tab"], [role="slider"], [tabindex]:not([tabindex="-1"]), input, video):focus-visible {
+  outline: 2px solid #67e8f9;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Skip link — hidden until focused with Tab */
+.skip-link {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 200;
+  border-radius: 9999px;
+  background: #fff;
+  color: #000;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: top 0.15s ease-out;
+}
+.skip-link:focus { top: 16px; }
+
 /* B1 bot — idle motion in CSS so it never costs main-thread JS */
 @keyframes bot-spin { to { transform: rotate(360deg); } }
 @keyframes bot-pulse {
@@ -236,7 +259,7 @@ body {
 .bot-pulse { animation: bot-pulse 2.2s ease-in-out infinite; }
 .bot-flicker { animation: bot-flicker 2.4s ease-in-out infinite; }
 .bot-blink { animation: bot-blink 4.5s ease-in-out infinite; }
-.bot-bob { animation: bot-bob 3.2s ease-in-out infinite; }
+.bot-bob { animation: bot-bob 3.2s ease-in-out infinite; will-change: transform; }
 [data-still] .bot-spin, [data-still] .bot-spin-rev, [data-still] .bot-pulse,
 [data-still] .bot-flicker, [data-still] .bot-blink, [data-still].bot-head * {
   animation: none;

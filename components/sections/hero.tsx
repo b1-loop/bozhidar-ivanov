@@ -261,7 +261,6 @@ function HeroContent() {
   const c = useContent();
   return (
     <div className="flex h-full w-full flex-col items-center justify-center px-6 text-center md:px-10">
-      <AvailabilityBadge />
 
       <div className="relative">
         <h1
@@ -685,47 +684,6 @@ function WindowShade() {
   );
 }
 
-function AvailabilityBadge() {
-  const c = useContent();
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className="group relative mb-8"
-    >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -inset-px rounded-full opacity-60 blur-[6px]"
-        style={{
-          background:
-            "conic-gradient(from 0deg, rgba(52,211,153,0), rgba(52,211,153,0.6), rgba(125,211,252,0.4), rgba(52,211,153,0), rgba(52,211,153,0))",
-          animation: "spin 6s linear infinite",
-        }}
-      />
-      <div className="relative flex flex-wrap items-center gap-0 overflow-hidden rounded-full border border-white/15 bg-black/70 backdrop-blur-xl">
-        <div className="flex items-center gap-2 py-1.5 pl-3 pr-3">
-          <span className="relative flex h-1.5 w-1.5 items-center justify-center">
-            <span className="absolute h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-            <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-          </span>
-          <span className="font-mono text-[9px] font-medium uppercase tracking-[0.25em] text-emerald-400">
-            {c.personal.availableLabel}
-          </span>
-        </div>
-        <span className="hidden h-4 w-px bg-white/10 sm:block" />
-        <div className="hidden items-center gap-2 py-1.5 pl-3 pr-4 sm:flex">
-          <span className="text-[9px] uppercase tracking-[0.25em] text-white/50">
-            {c.personal.searchLabel}
-          </span>
-          <span className="text-[11px] font-medium text-white/95">
-            {c.personal.searchValue}
-          </span>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 function MarqueeRow() {
   return (

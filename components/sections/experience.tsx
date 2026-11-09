@@ -361,6 +361,11 @@ function GateInfo({
   );
 }
 
+const STATS_COPY = {
+  en: { years: "Years", yearsHint: "in the workforce", roles: "Roles", rolesHint: "held to date", active: "Active", activeHint: "right now" },
+  sv: { years: "År", yearsHint: "i arbetslivet", roles: "Roller", rolesHint: "hittills", active: "Aktiva", activeHint: "just nu" },
+} as const;
+
 function StatsPanel({
   currentRoles,
   totalRoles,
@@ -368,6 +373,8 @@ function StatsPanel({
   currentRoles: number;
   totalRoles: number;
 }) {
+  const { locale } = useLocale();
+  const t = STATS_COPY[locale];
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -376,14 +383,9 @@ function StatsPanel({
       transition={{ duration: 0.6 }}
       className="grid grid-cols-3 gap-2 sm:gap-3"
     >
-      <StatItem value={8} suffix="+" label="Years" hint="in the workforce" />
-      <StatItem value={totalRoles} label="Roles" hint="held to date" />
-      <StatItem
-        value={currentRoles}
-        label="Active"
-        hint="right now"
-        accent
-      />
+      <StatItem value={8} suffix="+" label={t.years} hint={t.yearsHint} />
+      <StatItem value={totalRoles} label={t.roles} hint={t.rolesHint} />
+      <StatItem value={currentRoles} label={t.active} hint={t.activeHint} accent />
     </motion.div>
   );
 }

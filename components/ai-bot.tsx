@@ -34,39 +34,48 @@ export const OPEN_BOT_EVENT = "b1:open";
 /*  Humanoid head — white ceramic shell, glowing gold cores, facing viewer    */
 /* -------------------------------------------------------------------------- */
 
-function EarCore({
-  cx,
-  cy,
-  glow,
-  core,
-  still,
-  reverse = false,
-}: {
-  cx: number;
-  cy: number;
-  glow: string;
-  core: string;
-  still: boolean;
-  reverse?: boolean;
-}) {
-  const centered = { transformBox: "fill-box", transformOrigin: "center" } as const;
+/**
+ * Ear core rendered as its own small HTML layer *behind* the head SVG.
+ * The spinning ring and pulsing core animate `transform` on HTML elements,
+ * which the compositor handles alone — animating parts *inside* an SVG forced
+ * a full layout pass on every frame, even while the page was idle.
+ */
+function EarCore({ cx, cy, reverse = false, uid }: { cx: number; cy: number; reverse?: boolean; uid: string }) {
+  const R = 7.5; // ear radius in the head's 80-unit viewBox
+  const box = { left: `${((cx - R) / 80) * 100}%`, top: `${((cy - R) / 80) * 100}%`, width: `${((2 * R) / 80) * 100}%` };
+  const glow = `${uid}-eg`;
+  const core = `${uid}-ec`;
   return (
-    <g data-still={still || undefined}>
-      <circle cx={cx} cy={cy} r="7.5" fill="#1a130c" stroke="#b9bfc8" strokeWidth="1" />
-      <circle cx={cx} cy={cy} r="7.2" fill={`url(#${glow})`} />
-      <g style={centered} className={reverse ? "bot-spin-rev" : "bot-spin"}>
-        <circle cx={cx} cy={cy} r="5.3" fill="none" stroke="#fbbf24" strokeWidth="1.3" strokeDasharray="9 2.4" />
-      </g>
-      <circle
-        cx={cx}
-        cy={cy}
-        r="3.2"
-        fill={`url(#${core})`}
-        style={centered}
-        className="bot-pulse"
-      />
-      <circle cx={cx} cy={cy} r="1" fill="#fffbeb" />
-    </g>
+    <span aria-hidden className="absolute aspect-square" style={box}>
+      <svg viewBox="-7.5 -7.5 15 15" className="absolute inset-0 h-full w-full overflow-visible">
+        <defs>
+          <radialGradient id={glow} cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stopColor="#fcd34d" stopOpacity="0.85" />
+            <stop offset="0.45" stopColor="#f59e0b" stopOpacity="0.35" />
+            <stop offset="1" stopColor="#f59e0b" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={core} cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stopColor="#fff6d5" />
+            <stop offset="0.3" stopColor="#fcd34d" />
+            <stop offset="0.65" stopColor="#c27c1a" />
+            <stop offset="1" stopColor="#24170a" />
+          </radialGradient>
+        </defs>
+        <circle r="7.5" fill="#1a130c" stroke="#b9bfc8" strokeWidth="1" />
+        <circle r="7.2" fill={`url(#${glow})`} />
+      </svg>
+      <span className={`absolute inset-0 ${reverse ? "bot-spin-rev" : "bot-spin"}`}>
+        <svg viewBox="-7.5 -7.5 15 15" className="h-full w-full">
+          <circle r="5.3" fill="none" stroke="#fbbf24" strokeWidth="1.3" strokeDasharray="9 2.4" />
+        </svg>
+      </span>
+      <span className="bot-pulse absolute inset-0">
+        <svg viewBox="-7.5 -7.5 15 15" className="h-full w-full">
+          <circle r="3.2" fill={`url(#${core})`} />
+          <circle r="1" fill="#fffbeb" />
+        </svg>
+      </span>
+    </span>
   );
 }
 
@@ -75,15 +84,17 @@ export function RobotHead({
   lookY,
   size = 72,
   still = false,
+  fill = false,
 }: {
   lookX?: MotionValue<number>;
   lookY?: MotionValue<number>;
   size?: number;
   still?: boolean;
+  /** Stretch to the parent's size instead of a fixed pixel size */
+  fill?: boolean;
 }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
   const shell = `${uid}-shell`;
-  const core = `${uid}-core`;
   const glow = `${uid}-glow`;
   const centered = { transformBox: "fill-box", transformOrigin: "center" } as const;
 
@@ -97,25 +108,21 @@ export function RobotHead({
   const pupilY = useTransform(ly, (v) => v * 0.9);
 
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 80 80"
+    <span
       aria-hidden
-      className="bot-head overflow-visible"
+      className={`bot-head relative inline-block shrink-0 ${fill ? "h-full w-full" : ""}`}
+      style={fill ? undefined : { width: size, height: size }}
       data-still={still || undefined}
     >
+      {/* Ear cores sit behind the skull, on their own composited layers */}
+      <EarCore cx={19.5} cy={35} uid={uid} />
+      <EarCore cx={60.5} cy={35} uid={`${uid}r`} reverse />
+    <svg viewBox="0 0 80 80" className="absolute inset-0 h-full w-full overflow-visible">
       <defs>
         <radialGradient id={shell} cx="0.38" cy="0.3" r="0.75">
           <stop offset="0" stopColor="#ffffff" />
           <stop offset="0.55" stopColor="#e2e5ea" />
           <stop offset="1" stopColor="#8a919b" />
-        </radialGradient>
-        <radialGradient id={core} cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#fff6d5" />
-          <stop offset="0.3" stopColor="#fcd34d" />
-          <stop offset="0.65" stopColor="#c27c1a" />
-          <stop offset="1" stopColor="#24170a" />
         </radialGradient>
         <radialGradient id={glow} cx="0.5" cy="0.5" r="0.5">
           <stop offset="0" stopColor="#fcd34d" stopOpacity="0.85" />
@@ -133,7 +140,7 @@ export function RobotHead({
         <path d="M46 57 L48 80" stroke="#2f2a24" strokeWidth="3" />
         <path d="M33 67 L47 67 M32.5 74 L47.5 74" stroke="#7a6545" strokeWidth="0.9" />
       </g>
-      <g className="bot-flicker">
+      <g>
         <circle cx="37.3" cy="70" r="2.4" fill={`url(#${glow})`} />
         <circle cx="42.7" cy="64" r="2.1" fill={`url(#${glow})`} />
         <circle cx="40" cy="77" r="2.1" fill={`url(#${glow})`} />
@@ -143,10 +150,6 @@ export function RobotHead({
           <circle cx="40" cy="77" r="0.65" />
         </g>
       </g>
-
-      {/* Ear cores (sit behind the skull) */}
-      <EarCore cx={19.5} cy={35} glow={glow} core={core} still={still} />
-      <EarCore cx={60.5} cy={35} glow={glow} core={core} still={still} reverse />
 
       {/* Skull */}
       <path
@@ -196,6 +199,7 @@ export function RobotHead({
       {/* Crown highlight */}
       <path d="M29 13.5 C33 10.5 37 9.8 41 10" fill="none" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
     </svg>
+    </span>
   );
 }
 
@@ -346,9 +350,9 @@ function AiBotInner({ locale }: { locale: Locale }) {
   }, [pointerX, pointerY]);
   const lookX = useSpring(pointerX, { stiffness: 140, damping: 18 });
   const lookYPointer = useSpring(pointerY, { stiffness: 140, damping: 18 });
-  const lookY = useTransform<number, number>([lookYPointer, velocity], ([p, v]) =>
-    Math.max(-1, Math.min(1, p + v / 2000)),
-  );
+  // Gaze follows the pointer only: coupling it to scroll velocity re-rasterised
+  // the whole SVG head on every scroll frame
+  const lookY = lookYPointer;
 
   // One gentle nudge per session once the visitor has scrolled past the hero
   useMotionValueEvent(scrollY, "change", (v) => {
@@ -489,7 +493,7 @@ function AiBotInner({ locale }: { locale: Locale }) {
               aria-label={copy.openLabel}
               aria-expanded={open}
               tabIndex={open ? -1 : 0}
-              className="group pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full outline-none transition-transform duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:ring-amber-300/70 active:scale-95 max-sm:[&_svg]:h-[60px] max-sm:[&_svg]:w-[60px] sm:h-[76px] sm:w-[76px]"
+              className="group pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full outline-none transition-transform duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:ring-amber-300/70 active:scale-95 max-sm:[&_.bot-head]:!h-[54px] max-sm:[&_.bot-head]:!w-[54px] sm:h-[76px] sm:w-[76px]"
             >
               {/* Warm glow behind the core */}
               <span className="absolute -inset-4 -z-10 rounded-full bg-[radial-gradient(circle_at_50%_45%,rgba(251,191,36,0.32),rgba(255,255,255,0.06)_45%,transparent_70%)] opacity-70 transition-opacity duration-300 group-hover:opacity-100" />

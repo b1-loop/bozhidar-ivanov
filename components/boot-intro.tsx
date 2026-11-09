@@ -135,6 +135,26 @@ export function BootIntro() {
         if (phase === "exit") setPhase("gone");
       }}
     >
+      {/* The same aurora as the hero (already preloaded → instant, no extra download),
+          dimmed so the terminal stays readable. The curtain lifts onto the same sky. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/hero/aurora-wide-1800.jpg"
+        srcSet="/hero/aurora-wide-1200.jpg 1200w, /hero/aurora-wide-1800.jpg 1800w, /hero/aurora-wide-2400.jpg 2400w"
+        sizes="100vw"
+        alt=""
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
+        fetchPriority="high"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(70% 60% at 50% 50%, rgba(6,6,10,0.55) 0%, rgba(6,6,10,0.78) 70%, rgba(6,6,10,0.92) 100%)",
+        }}
+      />
+
       {/* Faint grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -168,7 +188,7 @@ export function BootIntro() {
 
           {/* B1 powers up as the agent loads */}
           <motion.div
-            className="relative mb-[0.1em] ml-auto h-[clamp(64px,16vw,128px)] w-[clamp(64px,16vw,128px)] shrink-0 [&_svg]:h-full [&_svg]:w-full"
+            className="relative mb-[0.1em] ml-auto h-[clamp(64px,16vw,128px)] w-[clamp(64px,16vw,128px)] shrink-0"
             style={{ opacity: headOpacity, scale: headScale, filter: headFilter }}
           >
             <motion.span
@@ -176,7 +196,7 @@ export function BootIntro() {
               animate={{ opacity: count >= 62 ? 1 : 0 }}
               transition={{ duration: 0.4 }}
             />
-            <RobotHead lookX={headLookX} size={128} />
+            <RobotHead lookX={headLookX} fill />
             {count >= 62 && (
               <motion.span
                 initial={{ opacity: 0, y: 4 }}
